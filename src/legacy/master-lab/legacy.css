@@ -1,0 +1,110 @@
+/*
+ * File: src/legacy/master-lab/legacy.css
+ * Description: The slice of ObservaLyst's globals.css the Master Lab needs: the ten skins (class-scoped, so each
+ * top branch can wear its own) and the word/line arrival keyframes. `.fw-legacy` also switches off the new
+ * design's halo and edge so the old thread looks the way it did in ObservaLyst.
+ */
+.fw-legacy {
+  /* Lives inside the new page, so it takes the page's ink and (transparent) canvas, and so follows LIGHT. */
+  --background: transparent;
+  --foreground: var(--ink);
+  color: var(--foreground);
+}
+
+.fw-legacy,
+.fw-legacy * {
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+  paint-order: normal;
+}
+
+/* --- 2. THE SOVEREIGN THEMES --- */
+/* Class-scoped: the body wears one app-wide, and any element can wear its own (Master Lab branches do). */
+
+.theme-aurora {
+  --theme-primary-glow: #FF2FA6; --theme-secondary-glow: #1FC7FF;
+  --node-1: #FF2FA6; --node-2: #C44CFF; --node-3: #8B6CFF; --node-4: #2ED6C9; --node-5: #1FC7FF;
+}
+
+.theme-ocean {
+  --theme-primary-glow: #00f2fe; --theme-secondary-glow: #3b82f6;
+  --node-1: #00f2fe; --node-2: #0284c7; --node-3: #1e3a8a; --node-4: #4338ca; --node-5: #3b82f6;
+}
+
+.theme-minimal {
+  --theme-primary-glow: #e5e5e5; --theme-secondary-glow: #737373;
+  --node-1: #f5f5f5; --node-2: #e5e5e5; --node-3: #d4d4d4; --node-4: #a3a3a3; --node-5: #737373;
+}
+
+.theme-solar {
+  --theme-primary-glow: #f59e0b; --theme-secondary-glow: #fde047;
+  --node-1: #fde047; --node-2: #facc15; --node-3: #f59e0b; --node-4: #ea580c; --node-5: #dc2626;
+}
+
+.theme-lava {
+  --theme-primary-glow: #ff4500; --theme-secondary-glow: #ea580c;
+  --node-1: #fb923c; --node-2: #f97316; --node-3: #ea580c; --node-4: #ef4444; --node-5: #dc2626;
+}
+
+.theme-nebula {
+  --theme-primary-glow: #ec4899; --theme-secondary-glow: #a855f7;
+  --node-1: #f472b6; --node-2: #ec4899; --node-3: #d946ef; --node-4: #a855f7; --node-5: #9333ea;
+}
+
+.theme-glass {
+  --theme-primary-glow: #22d3ee; --theme-secondary-glow: #06b6d4;
+  --node-1: #67e8f9; --node-2: #22d3ee; --node-3: #06b6d4; --node-4: #0891b2; --node-5: #0e7490;
+}
+
+.theme-celadon {
+  --theme-primary-glow: #c1ff22; --theme-secondary-glow: #3a4d28;
+  --node-1: #e2fcc0; --node-2: #c1ff22; --node-3: #8fa86b; --node-4: #54663e; --node-5: #25301b; 
+}
+
+.theme-forest {
+  --theme-primary-glow: #10b981; --theme-secondary-glow: #059669;
+  --node-1: #6ee7b7; --node-2: #34d399; --node-3: #10b981; --node-4: #059669; --node-5: #047857;
+}
+
+.theme-obsidian {
+  --theme-primary-glow: #ff2fa6; --theme-secondary-glow: #bd52fa; 
+  --node-1: #fbcfe8; --node-2: #f472b6; --node-3: #ff2fa6; --node-4: #d8b4fe; --node-5: #a855f7; 
+}
+
+
+/* --- 9. MASTER LAB THREAD: text and lines arriving --- */
+/* Words rise out of a soft blur one after another; lines draw down to meet them. */
+@keyframes fw-word-in {
+  from { opacity: 0; filter: blur(6px); transform: translateY(0.35em); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@keyframes fw-line-draw {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes fw-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fw-word-in {
+  display: inline-block;
+  animation: fw-word-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fw-line-draw {
+  transform-origin: top;
+  animation: fw-line-draw 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fw-fade-in {
+  animation: fw-fade-in 0.5s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.fw-word-in, .fw-line-draw, .fw-fade-in) {
+    animation: none;
+  }
+}

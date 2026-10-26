@@ -1,0 +1,369 @@
+@import "tailwindcss";
+
+/*
+ * FrissonWorks Design Lab: global styles.
+ * Look: the "FrissonWorks Design" book (poster style: type is the interface, no boxes behind text, a halo on every
+ * piece of text, weight 500 at most, no alpha on text: dim with a different OPAQUE colour).
+ * Settings: the Sovereign header (src/components/display) sets a skin class and light-mode on <body>, and
+ * data-text-scale / data-type-style on <html>. Skins and the font tiers are carried over from LoreLyst.
+ */
+
+/* ---- tokens -------------------------------------------------------------------------------------------------- */
+/* Declared on body, not :root, because the skin variables below live on body and a var() resolves where it is written. */
+body {
+  --canvas: #0a0a0f;
+  --background: var(--canvas); /* the name the WebGL backgrounds read */
+  --ink: #f5f5fa;
+  /* "Rest" tones are opaque mixes of ink and canvas, never alpha. */
+  --ink-2: #c4c4d2;
+  --ink-3: #9696aa;
+  --rail: #26262f;
+  --selection: #1d3b52;
+
+  /* Colour roles: T1 primary, T2 highlight, T3 support. All must read at 3:1 on the canvas. */
+  --t1: var(--theme-primary-glow);
+  --t2: var(--theme-secondary-glow);
+  --t3: var(--node-4);
+
+  /* The halo (under 24px it also gets an edge) and the glow rising from the bottom of the canvas. */
+  --halo-sm: 0 0.6px 0.8px rgb(0 0 0 / 0.9);
+  --halo-lg: 0 0.6px 1.1px rgb(0 0 0 / 0.8);
+  --halo-drop: drop-shadow(0 0.6px 0.8px rgb(0 0 0 / 0.9));
+  --edge: 0.6px rgb(0 0 0 / 0.7);
+  --glow: color-mix(in srgb, var(--theme-primary-glow) 16%, transparent);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.light-mode {
+  --canvas: #f4f4f7;
+  --ink: #14141a;
+  --ink-2: #3a3a48;
+  --ink-3: #5a5a6a;
+  --rail: #d2d2dc;
+  --selection: #c9dcec;
+  /* Skin colours are bright; on a pale page they are darkened toward black so they still read. */
+  --t1: color-mix(in srgb, var(--theme-primary-glow) 55%, #000);
+  --t2: color-mix(in srgb, var(--theme-secondary-glow) 55%, #000);
+  --t3: color-mix(in srgb, var(--node-4) 55%, #000);
+  /* A pale halo on a pale page (the design book leaves light mode's halo open; this is the cleaner of the two). */
+  --halo-sm: 0 0.6px 0.8px rgb(255 255 255 / 0.9);
+  --halo-lg: 0 0.6px 1.1px rgb(255 255 255 / 0.8);
+  --halo-drop: drop-shadow(0 0.6px 0.8px rgb(255 255 255 / 0.9));
+  --edge: 0 transparent;
+  --glow: color-mix(in srgb, var(--theme-primary-glow) 14%, transparent);
+}
+
+/* SHADOW: OFF blanks the halo and edge. It is kept as an accessibility opt-out. */
+body[data-shadow="off"] {
+  --halo-sm: none;
+  --halo-lg: none;
+  --halo-drop: none;
+  --edge: 0 transparent;
+}
+
+/* ---- skins (from LoreLyst: six node colours and the two theme glows each) --------------------------------------- */
+body.theme-aurora {
+  --theme-primary-glow: #FF2FA6; --theme-secondary-glow: #1FC7FF;
+  --node-1: #FF2FA6; --node-2: #C44CFF; --node-3: #8B6CFF; --node-4: #2ED6C9; --node-5: #1FC7FF; --node-6: #E83BDF;
+}
+body.theme-ocean {
+  --theme-primary-glow: #00f2fe; --theme-secondary-glow: #3b82f6;
+  --node-1: #00f2fe; --node-2: #0284c7; --node-3: #60a5fa; --node-4: #818cf8; --node-5: #3b82f6; --node-6: #a5b4fc;
+}
+body.theme-minimal {
+  --theme-primary-glow: #e5e5e5; --theme-secondary-glow: #8a8a8a;
+  --node-1: #f5f5f5; --node-2: #e5e5e5; --node-3: #d4d4d4; --node-4: #bdbdbd; --node-5: #a3a3a3; --node-6: #8f8f8f;
+}
+body.theme-minimal.light-mode {
+  --theme-primary-glow: #262626; --theme-secondary-glow: #6b6b6b;
+  --node-1: #171717; --node-2: #333333; --node-3: #4d4d4d; --node-4: #666666; --node-5: #7a7a7a; --node-6: #595959;
+}
+/* Minimal's glow is near-white; inside the aura layer only it becomes deep charcoal so it lifts the black instead of greying it. */
+body.theme-minimal:not(.light-mode) .fw-aura {
+  --theme-primary-glow: #333333; --node-2: #2b2b2b; --node-3: #262626; --node-4: #2e2e2e; --node-5: #242424;
+}
+body.theme-solar {
+  --theme-primary-glow: #f59e0b; --theme-secondary-glow: #fde047;
+  --node-1: #fde047; --node-2: #facc15; --node-3: #f59e0b; --node-4: #ea580c; --node-5: #ef4444; --node-6: #fb923c;
+}
+body.theme-gold {
+  --theme-primary-glow: #D4AF37; --theme-secondary-glow: #CBA171;
+  --node-1: #F3E2A9; --node-2: #E6C97A; --node-3: #D4AF37; --node-4: #CBA171; --node-5: #C09A4E; --node-6: #B08B2E;
+}
+body.theme-gold:not(.light-mode) .fw-aura {
+  --theme-primary-glow: #7F6221; --theme-secondary-glow: #94744D;
+  --node-1: #A3815A; --node-2: #94744D; --node-3: #856741; --node-4: #765A34; --node-5: #71551D; --node-6: #8C6F27;
+}
+body.theme-nebula {
+  --theme-primary-glow: #ec4899; --theme-secondary-glow: #a855f7;
+  --node-1: #f472b6; --node-2: #ec4899; --node-3: #d946ef; --node-4: #a855f7; --node-5: #a78bfa; --node-6: #e879f9;
+}
+body.theme-glass {
+  --theme-primary-glow: #22d3ee; --theme-secondary-glow: #06b6d4;
+  --node-1: #67e8f9; --node-2: #22d3ee; --node-3: #06b6d4; --node-4: #0891b2; --node-5: #0fa5c9; --node-6: #2dd4bf;
+}
+body.theme-celadon {
+  --theme-primary-glow: #c1ff22; --theme-secondary-glow: #9bbd5a;
+  --node-1: #e2fcc0; --node-2: #c1ff22; --node-3: #8fa86b; --node-4: #7a9a52; --node-5: #6b8a45; --node-6: #a7db1f;
+}
+body.theme-forest {
+  --theme-primary-glow: #10b981; --theme-secondary-glow: #059669;
+  --node-1: #6ee7b7; --node-2: #34d399; --node-3: #10b981; --node-4: #059669; --node-5: #059f72; --node-6: #a7f3d0;
+}
+body.theme-obsidian {
+  --theme-primary-glow: #ff2fa6; --theme-secondary-glow: #bd52fa;
+  --node-1: #fbcfe8; --node-2: #f472b6; --node-3: #ff2fa6; --node-4: #d8b4fe; --node-5: #a855f7; --node-6: #c084fc;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rail: var(--rail);
+  --color-t1: var(--t1);
+  --color-t2: var(--t2);
+  --color-t3: var(--t3);
+  --font-sans: var(--fw-font);
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* ---- TEXT and TYPE settings -------------------------------------------------------------------------------------- */
+/* Reading text is in rem, so TEXT scales it; hero, Vogue titles and statements are px and stay fixed. */
+html[data-text-scale="small"] { font-size: 14px; }
+html[data-text-scale="normal"] { font-size: 16px; }
+html[data-text-scale="large"] { font-size: 18px; }
+
+html { --fw-font: var(--font-jost), "Jost", system-ui, sans-serif; }
+html[data-type-style="italic"] { --fw-font: var(--font-jost), "Jost", system-ui, sans-serif; }
+html[data-type-style="italic"] body { font-style: italic; }
+html[data-type-style="serif"] { --fw-font: var(--font-newsreader), Georgia, serif; }
+html[data-type-style="sans"] { --fw-font: var(--font-inter), Inter, system-ui, sans-serif; }
+html[data-type-style="mono"] { --fw-font: var(--font-geist-mono), ui-monospace, monospace; }
+
+/* ---- base ---------------------------------------------------------------------------------------------------------- */
+body {
+  min-height: 100vh;
+  overflow-x: clip;
+  color: var(--ink);
+  font-family: var(--fw-font);
+  font-weight: 300;
+  /* A soft glow rising from the bottom of the canvas; the only surface there is (hidden under a background). */
+  background:
+    radial-gradient(ellipse 90% 38% at 50% 112%, var(--glow), transparent 70%),
+    var(--canvas);
+  background-attachment: fixed;
+  /* Halo + edge, under 24px: a soft shadow and the same text drawn once more with a thin stroke beneath. */
+  text-shadow: var(--halo-sm);
+  -webkit-text-stroke: var(--edge);
+  paint-order: stroke fill;
+  transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
+}
+
+/* 24px and up: halo only, no edge. */
+.fw-big {
+  text-shadow: var(--halo-lg);
+  -webkit-text-stroke: 0;
+}
+
+/* Gradient text: clip the background to the glyphs and move the halo to a drop-shadow so it survives. */
+.fw-gradient-text {
+  display: inline-block;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+  filter: var(--halo-drop);
+}
+
+/* The Vogue title: thin, upper case, widely spaced, always with the halo. */
+.fw-vogue {
+  font-weight: 200;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  text-shadow: var(--halo-lg);
+  -webkit-text-stroke: 0;
+}
+
+/* Kicker: small upper-case word, tracked. */
+.fw-kicker {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.fw-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+  text-shadow: inherit;
+  -webkit-text-stroke: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* The Reply under a comment: one design everywhere (collapsed on hover, and revealed): the same size as the name, light, quiet; brightens when pointed at.
+   A class rather than utilities, because the button reset above would otherwise override the size and colour. */
+.fw-reply {
+  font-size: 0.8125rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink-3);
+  transition-property: opacity, color;
+}
+.fw-reply:hover {
+  color: var(--ink);
+}
+
+/* In the base layer, so a component can opt out with a utility (outline-none); unlayered CSS would always win. */
+@layer base {
+  :focus-visible {
+    outline: 1px solid var(--t1);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+::selection {
+  background: var(--selection);
+  color: var(--ink);
+}
+
+/* ---- the Sovereign header (from LoreLyst's poster.css, in this lab's tokens) ------------------------------------- */
+.fw-sov { position: fixed; top: 0; right: 0; z-index: 10000; padding: 14px 14px 0 0; pointer-events: none; }
+.fw-sov__wrap { position: relative; display: flex; flex-direction: column; align-items: flex-end; pointer-events: auto; }
+.fw-icon-btn {
+  display: grid; place-items: center; width: 48px; height: 48px;
+  background: none; border: none; color: var(--ink); filter: var(--halo-drop);
+  transition: color 0.3s var(--ease);
+}
+.fw-icon-btn:hover, .fw-icon-btn[data-lit="true"] { color: var(--t1); }
+.fw-sov__panel {
+  position: absolute; top: 100%; right: 0; margin-top: 6px;
+  width: min(420px, calc(100vw - 28px)); max-height: calc(100dvh - 84px); overflow-y: auto;
+  padding: 20px 28px 24px;
+  /* The one blurred layer: a real blur over a wash of the canvas, no border, no rounded corners. */
+  background: color-mix(in srgb, var(--canvas) 72%, transparent);
+  -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px);
+}
+.fw-sov__row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 24px;
+  width: 100%; min-height: 50px; padding: 6px 0; text-align: left; background: none; border: none; cursor: pointer;
+}
+.fw-sov__label {
+  font-size: 0.875rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--ink);
+  transition: color 0.3s var(--ease);
+}
+.fw-sov__value {
+  font-size: 1.375rem; font-weight: 300; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t1);
+  text-shadow: var(--halo-lg); -webkit-text-stroke: 0;
+}
+.fw-sov__row:hover .fw-sov__label { color: var(--t1); }
+.fw-sov__row--dual { cursor: default; }
+.fw-sov__duo { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 14px; text-align: right; }
+.fw-sov__part { background: none; border: none; padding: 4px 0; cursor: pointer; }
+.fw-sov__part:hover { color: var(--ink); }
+.fw-sov__apps { display: flex; flex-wrap: wrap; gap: 0 24px; margin-top: 22px; }
+.fw-sov__link {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: 0.875rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--ink);
+}
+.fw-sov__link:hover { color: var(--t1); }
+
+/* ---- motion helpers (MOTION levels, see src/lib/motion/presets.ts) ----------------------------------------------- */
+/* OTT: a chromatic fringe that settles into the normal halo. */
+@keyframes fw-fringe {
+  0% { text-shadow: 4px 0 0 var(--theme-secondary-glow), -4px 0 0 var(--theme-primary-glow); }
+  100% { text-shadow: var(--halo-lg); }
+}
+.fw-fringe { animation: fw-fringe 0.7s var(--ease) both; }
+.fw-fringe-hover:hover, .fw-fringe-hover:focus-visible { text-shadow: 3px 0 0 var(--theme-secondary-glow), -3px 0 0 var(--theme-primary-glow); }
+/* A revealed block fading in from a soft blur. */
+@keyframes fw-reveal-in {
+  from { opacity: 0; filter: blur(3px); }
+  to { opacity: 1; filter: blur(0); }
+}
+.fw-reveal { animation: fw-reveal-in 0.4s var(--ease) both; }
+/* COLOUR / OTT: a gradient that slides through the skin colours. */
+@keyframes fw-drift { to { background-position: 200% 0; } }
+.fw-drift {
+  background-image: linear-gradient(90deg, var(--ink), var(--node-1), var(--node-3), var(--node-5), var(--ink));
+  background-size: 200% 100%;
+  animation: fw-drift 6s linear infinite;
+}
+
+/* ---- composer glow styles (src/components/backgrounds/GlowFrame.tsx) -------------------------------------------- */
+.fw-mesh-blob { position: absolute; width: 55%; height: 140%; border-radius: 50%; filter: blur(34px); opacity: 0.38; }
+.fw-mesh-a { left: -8%; top: -30%; animation: fw-mesh-a 9s ease-in-out infinite alternate; }
+.fw-mesh-b { left: 30%; top: -10%; animation: fw-mesh-b 11s ease-in-out infinite alternate; }
+.fw-mesh-c { right: -10%; top: -25%; animation: fw-mesh-c 13s ease-in-out infinite alternate; }
+@keyframes fw-mesh-a { to { transform: translate(18%, 14%) scale(1.15); } }
+@keyframes fw-mesh-b { to { transform: translate(-16%, 18%) scale(0.9); } }
+@keyframes fw-mesh-c { to { transform: translate(-20%, 10%) scale(1.2); } }
+.fw-gradient-glow {
+  background: linear-gradient(110deg, var(--node-1), var(--node-3), var(--node-5), var(--node-1));
+  background-size: 250% 100%;
+  opacity: 0.22;
+  animation: fw-sweep 10s linear infinite;
+}
+@keyframes fw-sweep { to { background-position: 250% 0; } }
+.fw-aurora-band { position: absolute; top: -40%; width: 38%; height: 190%; border-radius: 50%; filter: blur(28px); opacity: 0.4; transform-origin: 50% 100%; }
+.fw-aurora-a { left: 6%; background: linear-gradient(to top, transparent, var(--node-2), var(--node-4)); animation: fw-aurora-a 7s ease-in-out infinite alternate; }
+.fw-aurora-b { left: 46%; background: linear-gradient(to top, transparent, var(--node-5), var(--node-1)); animation: fw-aurora-b 9s ease-in-out infinite alternate; }
+@keyframes fw-aurora-a { from { transform: translateX(-10%) skewX(-8deg); } to { transform: translateX(24%) skewX(10deg); } }
+@keyframes fw-aurora-b { from { transform: translateX(14%) skewX(9deg); } to { transform: translateX(-22%) skewX(-10deg); } }
+
+/* Nothing moves for people who ask for less motion, and MOTION OFF stops CSS transitions and animations too. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+body[data-kinematics="off"] *,
+body[data-kinematics="off"] *::before,
+body[data-kinematics="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* ---- hero titles (src/components/hero/HeroTitle.tsx) -------------------------------------------------------------- */
+/* Offscreen titles pause; OFF is already handled by the kinematics rule above and by each design drawing itself still. */
+.fw-hero[data-live="false"] * { animation-play-state: paused !important; }
+
+@keyframes fw-h-breathe { from { opacity: 0.72; } to { opacity: 1; } }
+@keyframes fw-h-hue { from { filter: hue-rotate(-26deg); } to { filter: hue-rotate(26deg); } }
+@keyframes fw-h-sway { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(var(--sx), var(--sy)); } }
+@keyframes fw-h-tear {
+  0% { transform: translateY(10px); } 14% { transform: translateY(95px); } 28% { transform: translateY(40px); }
+  42% { transform: translateY(-20px); } 56% { transform: translateY(120px); } 70% { transform: translateY(60px); } 84% { transform: translateY(-30px); }
+}
+@keyframes fw-h-sweep {
+  0% { transform: translateX(var(--a)) skewX(-20deg); }
+  42%, 100% { transform: translateX(var(--b)) skewX(-20deg); }
+}
+@keyframes fw-h-cloud-a { from { transform: translate(-30px, -10px) scale(0.9); } to { transform: translate(260px, 30px) scale(1.15); } }
+@keyframes fw-h-cloud-b { from { transform: translate(120px, 40px) scale(1.1); } to { transform: translate(-220px, -30px) scale(0.85); } }
+@keyframes fw-h-cloud-c { from { transform: translate(40px, 20px) scale(1); } to { transform: translate(-280px, -20px) scale(1.2); } }
+/* Veil: a letter surfaces out of the mist (blurred, low, a touch large) and sharpens; then the wave breathes. */
+@keyframes fw-h-veil {
+  from { opacity: 0; filter: blur(26px); transform: translateY(var(--ry)) scale(1.12); }
+  60% { filter: blur(3px); }
+  to { opacity: 1; filter: blur(0.5px); transform: none; }
+}
+@keyframes fw-h-wave { from { opacity: 0.6; } to { opacity: 1; } }
