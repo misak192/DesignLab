@@ -104,6 +104,10 @@ The design on /comments is the default comment section for every FrissonWorks ap
 - `src/lib/hero/heroes.ts` (pure): names, tags, notes, the sample words (Nexus project colours) and `projectTint`. `hero` in `settings.ts` is the saved default (`HERO_STYLES`).
 - Reads MOTION through `useMotion()`: OFF paints still, NORMAL calm, COLOUR lets colour drift, OTT is loud. One shared window pointer listener; scroll via `useScroll` on the title box. Decoration only: aria-hidden, `pointer-events: none`, no halo (art, not reading text), no trust/identity meaning. Keyframes are `fw-h-*` in `globals.css`; offscreen titles pause (`data-live="false"`).
 
+## Ported to ObservaLyst (26 Oct 2026)
+
+A copy of the comment section lives in the ObservaLyst repo (`components/fw-comments/`, `lib/fw-comments/`), shown on `/lab/room` ("Comments Room" tab). It is these files copied with imports rewritten (`src/lib/fw-comments/*`, `src/lib/motion/presets.ts` as `motion.ts`, `Age`, `CommentRow`, `CommentText`, `Composer`, `Controls`, `context`, `useHeightTransition`, `GlowFrame`, `ConstellationField`); the host-specific parts are `display.ts` (light and MOTION from ObservaLyst's provider; glow fixed to stars), `store.ts` (the room and the comment settings in localStorage, so nothing is lost on reload) and `CommentsRoom.tsx` (the Room board, empty). Comment settings (palette, levels per tap, thread lines) are in ObservaLyst's Sovereign header under COMMENTS. **A fix to the comment components here must be copied there too** until they become the shared `@frissonworks/comments` package (re-run the copy, then keep `display.ts`/`store.ts`/`CommentsRoom.tsx`).
+
 ## Gotcha: the button reset
 
 `globals.css` has an unlayered `button, input, textarea { font: inherit; color: inherit }`. Unlayered CSS beats Tailwind utilities, so `text-*`, `font-*` and `hover:text-*` classes on a `<button>` do **not** apply. Style buttons with a class in `globals.css` (like `.fw-reply`) or an inline style, or put the reset in `@layer base`.
