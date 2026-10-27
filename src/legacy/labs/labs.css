@@ -1,0 +1,19 @@
+/*
+ * File: src/legacy/labs/labs.css
+ * Description: What the ported labs need on top of legacy.css: the hidden scrollbar the sideways layouts use
+ * (ObservaLyst's .no-scrollbar), and an opaque canvas, so the dot on a branch rail still punches a hole through
+ * the line. legacy.css leaves --background transparent, which the Master Lab's thread wants but these do not.
+ */
+.fw-legacy.fw-labs {
+  --background: var(--canvas);
+}
+
+/* Sideways scrolling without a scrollbar (Side by side, Pyramid). */
+.fw-labs .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.fw-labs .no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

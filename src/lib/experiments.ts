@@ -17,7 +17,7 @@ export const EXPERIMENTS: Experiment[] = [
   {
     href: '/comments',
     title: 'Comments',
-    blurb: 'Letter-coded comments in three tabs: the lab, the old Master Lab thread, and a room to play in as anyone.',
+    blurb: 'Letter-coded comments, a room to play in as anyone, and every comment section ObservaLyst tried before them.',
     tag: 'Lab · Old · Room',
   },
   {

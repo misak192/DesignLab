@@ -1,11 +1,13 @@
 /**
  * File: src/components/comments/CommentsPage.tsx
- * Description: The /comments page: one page, three tabs.
+ * Description: The /comments page: one page, five tabs.
  *   Comments Lab   the letter-coded comments with every display option to tune (read-only conversation)
  *   Old Comments   the ObservaLyst Master Lab thread, unchanged, for comparison (rendered on the server, passed in)
+ *   Old Threads    ObservaLyst's Comments Lab: five comment sections under five posts (server, passed in)
+ *   Old Branches   ObservaLyst's Branches Lab: six branching layouts of one debate, with votes (server, passed in)
  *   Comments Room  your playground: impersonate anyone, start hero posts, reply, vote
  * The display options live here, so what you tune in the Lab is what the Room shows. The tab is kept in the URL
- * (?tab=old / ?tab=room) so a refresh or a link lands on the same tab.
+ * (?tab=old / ?tab=threads / ?tab=branches / ?tab=room) so a refresh or a link lands on the same tab.
  */
 "use client";
 import { useState, type ReactNode } from 'react';
@@ -17,23 +19,35 @@ import { useUrlTab } from '@/lib/useUrlTab';
 import CommentsBoard from './CommentsBoard';
 import { LabSettings, type BoardSettings } from './Controls';
 
-type TabId = 'lab' | 'old' | 'room';
+type TabId = 'lab' | 'old' | 'threads' | 'branches' | 'room';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'lab', label: 'Comments Lab' },
   { id: 'old', label: 'Old Comments' },
+  { id: 'threads', label: 'Old Threads' },
+  { id: 'branches', label: 'Old Branches' },
   { id: 'room', label: 'Comments Room' },
 ];
 
 const STATEMENTS: Record<TabId, string> = {
   lab: 'A conversation you can read by its colours.',
   old: 'The Master Lab thread, as it was in ObservaLyst.',
+  threads: 'Five ways to hold a conversation.',
+  branches: 'Six ways to branch one, and votes that re-route it.',
   room: 'Your playground. Be anyone, say anything.',
 };
 
-const TAB_IDS = ['lab', 'old', 'room'] as const;
+// The line each ported lab opened with in ObservaLyst.
+const NOTES: Partial<Record<TabId, string>> = {
+  threads:
+    'Each post below uses a different comment section. Open one with the arrow under the post and compare how it feels to read.',
+  branches:
+    'Every variation shows the same Upper Street debate. Vote with the arrows and watch comments move. Lab rule: every click counts, so you can push things around; the real app will allow one vote per person.',
+};
 
-export default function CommentsPage({ old }: { old: ReactNode }) {
+const TAB_IDS = ['lab', 'old', 'threads', 'branches', 'room'] as const;
+
+export default function CommentsPage({ old, threads, branches }: { old: ReactNode; threads: ReactNode; branches: ReactNode }) {
   const [tab, selectTab] = useUrlTab<TabId>(TAB_IDS);
   const m = useMotion();
   const [settings, setSettings] = useState<BoardSettings>({
@@ -85,6 +99,10 @@ export default function CommentsPage({ old }: { old: ReactNode }) {
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="flex flex-col gap-14">
+        {NOTES[tab] && (
+          <p className="max-w-[60ch] text-[1.0625rem] font-light leading-[1.5] text-ink-2">{NOTES[tab]}</p>
+        )}
+
         {tab === 'lab' && (
           <>
             <section aria-label="Settings" className="flex flex-col gap-3">
@@ -134,6 +152,11 @@ export default function CommentsPage({ old }: { old: ReactNode }) {
         )}
 
         {tab === 'old' && <div className="max-w-2xl">{old}</div>}
+
+        {tab === 'threads' && <div className="max-w-2xl">{threads}</div>}
+
+        {/* The sideways layouts (Side by side, Pyramid) want the whole page width. */}
+        {tab === 'branches' && branches}
 
         {tab === 'room' && <CommentsBoard mode="room" settings={settings} />}
       </div>
