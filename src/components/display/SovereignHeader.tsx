@@ -21,6 +21,16 @@ const PAGES = [
   { href: '/cards', label: 'Cards' },
   { href: '/hero-titles', label: 'Hero titles' },
   { href: '/backgrounds', label: 'Backgrounds' },
+  { href: '/notifications', label: 'Notifications' },
+  { href: '/fluid-smoke', label: 'Fluid Shaders' },
+  { href: '/shared-elements', label: 'Shared Elements' },
+  { href: '/type-dissolve', label: 'Type Dissolve' },
+  { href: '/charts', label: 'Letter Charts' },
+  { href: '/gestures', label: 'Spring Gestures' },
+  { href: '/glass', label: 'Glass Refraction' },
+  { href: '/3d-depth', label: '3D Depth' },
+  { href: '/trails', label: 'Touch Trails' },
+  { href: '/page-transitions', label: 'Page Transitions' },
 ];
 
 /* The profile glyph, as drawn in the Claude Design files: a head and shoulders, 1.4 stroke. */
