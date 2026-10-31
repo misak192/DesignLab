@@ -11,27 +11,17 @@ import Link from 'next/link';
 import { useDisplay } from '@/components/display/DisplayProvider';
 import { HERO_STYLES, type HeroStyle } from '@/lib/display/settings';
 import { HERO_INFO, HERO_TAGS, HERO_WORDS, SKIN_TINT, projectTint, type HeroTag, type HeroWord } from '@/lib/hero/heroes';
+import { useUrlTab } from '@/lib/useUrlTab';
 import HeroTitle from './HeroTitle';
+import CalendarLab from './CalendarLab';
+import { Choice, Row } from './choices';
 
-/** A text choice: the colour sits on the inner span because the global button reset would override it on the button. */
-function Choice({ label, on, onClick }: { label: string; on: boolean; onClick: () => void }) {
-  return (
-    <button type="button" aria-pressed={on} onClick={onClick} className="min-h-[48px] px-1 text-left">
-      <span className="fw-big text-[19px]" style={{ color: on ? 'var(--t1)' : 'var(--ink)', fontWeight: on ? 500 : 300 }}>
-        {label}
-      </span>
-    </button>
-  );
-}
-
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-baseline gap-x-6 gap-y-0">
-      <span className="fw-kicker w-[5.5rem] text-ink-2">{label}</span>
-      <div className="flex flex-wrap gap-x-5">{children}</div>
-    </div>
-  );
-}
+type TabId = 'titles' | 'calendar';
+const TAB_IDS = ['titles', 'calendar'] as const;
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'titles', label: 'Titles' },
+  { id: 'calendar', label: 'Calendar' },
+];
 
 /** What sits on top of a title in the Nexus: the kicker with its count, the tagline, then the rows. */
 function Sample({ w, colour }: { w: HeroWord; colour: string }) {
@@ -66,6 +56,7 @@ export default function HeroLab() {
   const [page, setPage] = useState(false);
   const [tag, setTag] = useState<HeroTag | 'All'>('All');
   const [plays, setPlays] = useState<Record<string, number>>({});
+  const [tab, selectTab] = useUrlTab<TabId>(TAB_IDS);
 
   const w = HERO_WORDS[wordIdx];
   const tint = project ? projectTint(w.colour, settings.light) : SKIN_TINT;
@@ -83,14 +74,44 @@ export default function HeroLab() {
         <p className="fw-big max-w-[28ch] text-[29px] font-light leading-[1.25] text-ink">
           The huge name behind the text, drawn as light that follows the letters.
         </p>
-        <p className="max-w-[60ch] text-[1.0625rem] font-light leading-[1.5] text-ink-2">
-          Letters made of light: haze, beams, glass, metal. No outlines anywhere, only fill and transparency. Shown at the
-          size they have behind a Nexus list, cropped by the column. Move the pointer over them, scroll past them, and
-          change MOTION in the header to feel each at OFF, NORMAL, COLOUR and OTT. A hero title is decoration: it carries
-          no meaning and the text on top keeps every tap.
-        </p>
+        {tab === 'titles' && (
+          <p className="max-w-[60ch] text-[1.0625rem] font-light leading-[1.5] text-ink-2">
+            Letters made of light: haze, beams, glass, metal. No outlines anywhere, only fill and transparency. Shown at the
+            size they have behind a Nexus list, cropped by the column. Move the pointer over them, scroll past them, and
+            change MOTION in the header to feel each at OFF, NORMAL, COLOUR and OTT. A hero title is decoration: it carries
+            no meaning and the text on top keeps every tap.
+          </p>
+        )}
       </header>
 
+      <div role="tablist" aria-label="Hero titles" className="mb-12 flex flex-wrap gap-x-10 gap-y-1">
+        {TABS.map((t) => {
+          const selected = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              id={`tab-${t.id}`}
+              aria-selected={selected}
+              aria-controls={`panel-${t.id}`}
+              onClick={() => selectTab(t.id)}
+              className="fw-big relative min-h-[48px] text-[22px] font-light uppercase tracking-[0.08em] transition-colors hover:text-t1"
+              style={{ color: selected ? 'var(--t1)' : 'var(--ink)', fontWeight: selected ? 400 : 300 }}
+            >
+              {t.label}
+              {selected && <span aria-hidden className="absolute inset-x-0 bottom-1 h-px bg-t1" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {tab === 'calendar' ? (
+        <div role="tabpanel" id="panel-calendar" aria-labelledby="tab-calendar">
+          <CalendarLab />
+        </div>
+      ) : (
+      <div role="tabpanel" id="panel-titles" aria-labelledby="tab-titles" className="flex flex-col">
       <div className="flex flex-col">
         <Row label="Word">
           {HERO_WORDS.map((x, i) => (
@@ -154,6 +175,8 @@ export default function HeroLab() {
 
         {shown.length === 0 && <p className="text-[1.0625rem] font-light text-ink-2 md:col-span-2">Nothing carries that tag.</p>}
       </div>
+      </div>
+      )}
     </main>
   );
 }

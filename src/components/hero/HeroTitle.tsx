@@ -14,6 +14,8 @@
  */
 "use client";
 import {
+  createContext,
+  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -49,11 +51,15 @@ const PAD = 60;
 const CAP = 0.7;
 const CAP_H = SIZE * CAP;
 
+/** The gap between letters, in viewBox units; `spread` widens it so the word fills a given width. */
+const BASE_SPACING = SIZE * 0.06;
+const SpacingCtx = createContext(BASE_SPACING);
+
 const TEXT_STYLE: CSSProperties = {
   fontFamily: 'var(--fw-font)',
   fontWeight: 300,
   fontSize: SIZE,
-  letterSpacing: '0.06em',
+  letterSpacing: `${BASE_SPACING}px`,
   // The page's halo and edge belong to reading text; art draws its own light.
   textShadow: 'none',
   WebkitTextStroke: '0',
@@ -89,10 +95,38 @@ function makeGeom(text: string, textW: number, xs: number[] | null, below: numbe
   };
 }
 
-/** Measure the word once the face is loaded: total width and where each letter starts. */
-function useGeom(text: string, below: number) {
+/**
+ * Measure the word once the face is loaded: total width and where each letter starts. With `target` (the visible width
+ * wanted, in viewBox units) the gap between letters grows until the word is that wide; a word that is already wider
+ * keeps the normal gap.
+ */
+function useGeom(text: string, below: number, target = 0) {
   const probe = useRef<SVGTextElement>(null);
+  /** Always set at the normal gap: what the word would measure unstretched. */
+  const baseProbe = useRef<SVGTextElement>(null);
   const [measured, setMeasured] = useState<{ text: string; w: number; xs: number[] } | null>(null);
+  const [base, setBase] = useState<{ text: string; w: number } | null>(null);
+
+  // The gap comes from the unstretched width alone (never from the stretched measurement), so it cannot chase itself.
+  const gaps = [...text].length - 1;
+  let spacing = BASE_SPACING;
+  if (target > 0 && base && base.text === text && gaps > 0) {
+    spacing = Math.round(Math.max(BASE_SPACING, BASE_SPACING + (target - base.w) / gaps) * 10) / 10;
+  }
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = baseProbe.current;
+      if (!el) return;
+      const bb = el.getBBox();
+      // The box includes the spacing after the last letter; the visible word does not.
+      if (bb.width) setBase({ text, w: bb.width - BASE_SPACING });
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    document.fonts?.addEventListener('loadingdone', measure);
+    return () => document.fonts?.removeEventListener('loadingdone', measure);
+  }, [text]);
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -101,19 +135,18 @@ function useGeom(text: string, below: number) {
       const bb = el.getBBox();
       if (!bb.width) return;
       const xs = Array.from({ length: el.getNumberOfChars() }, (_, i) => el.getStartPositionOfChar(i).x);
-      // The box includes the spacing after the last letter; the visible word does not.
-      setMeasured({ text, w: bb.width - SIZE * 0.06, xs });
+      setMeasured({ text, w: bb.width - spacing, xs });
     };
     measure();
     document.fonts?.ready.then(measure);
     document.fonts?.addEventListener('loadingdone', measure);
     return () => document.fonts?.removeEventListener('loadingdone', measure);
-  }, [text]);
+  }, [text, spacing]);
 
   // A new word shows a guess until it is measured.
   const hit = measured && measured.text === text ? measured : null;
   const geom = makeGeom(text, hit ? hit.w : text.length * SIZE * 0.7, hit ? hit.xs : null, below);
-  return { probe, geom, ready: hit !== null };
+  return { probe, baseProbe, geom, ready: hit !== null, spacing };
 }
 
 /* ---- the pointer, shared ------------------------------------------------------------------------------------------ */
@@ -152,8 +185,9 @@ interface WordProps {
 
 /** The word (or one letter of it) at the common baseline. Colours go through style so CSS variables work everywhere. */
 function Word({ text, x = 0, fill, op, filter, style }: WordProps) {
+  const spacing = useContext(SpacingCtx);
   return (
-    <text x={x} y={SIZE} style={{ ...TEXT_STYLE, fill, stroke: 'none', opacity: op, filter, ...style }}>
+    <text x={x} y={SIZE} style={{ ...TEXT_STYLE, letterSpacing: `${spacing}px`, fill, stroke: 'none', opacity: op, filter, ...style }}>
       {text}
     </text>
   );
@@ -306,9 +340,9 @@ function Airbrush({ text, g, id, tint, m, light }: VP) {
   const ott = m.level === 'ott';
   const hi = bright(tint, light);
   const passes = [
-    { c: hi, seed: 3, gain: 3.2, o: 0.95 },
-    ...(m.colour ? [{ c: tint.c2, seed: 11, gain: 2.1, o: 0.8 }] : []),
-    ...(ott ? [{ c: tint.c3, seed: 23, gain: 1.6, o: 0.7 }] : []),
+    { c: hi, seed: 3, gain: 2.1, o: 0.95 },
+    ...(m.colour ? [{ c: tint.c2, seed: 11, gain: 1.5, o: 0.8 }] : []),
+    ...(ott ? [{ c: tint.c3, seed: 23, gain: 1.2, o: 0.7 }] : []),
   ];
   return (
     <>
@@ -318,11 +352,13 @@ function Airbrush({ text, g, id, tint, m, light }: VP) {
         <Blur id={`${id}b`} g={g} sd={14} />
         {passes.map((p, i) => (
           <filter key={i} id={`${id}s${i}`} filterUnits="userSpaceOnUse" x={g.vx} y={g.vy} width={g.vw} height={g.vh}>
-            <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed={p.seed} result="n" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.34" numOctaves="2" seed={p.seed} result="n" />
             <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="na" />
-            <feComposite in="SourceAlpha" in2="na" operator="arithmetic" k1="0" k2={p.gain} k3={-p.gain} k4="0" result="dots" />
+            <feComposite in="SourceAlpha" in2="na" operator="arithmetic" k1="0" k2={p.gain} k3={-p.gain * 0.8} k4="0" result="dots" />
+            {/* A little blur melts the grain into a soft spray instead of hard specks. */}
+            <feGaussianBlur in="dots" stdDeviation="1.5" result="soft" />
             <feFlood style={{ floodColor: p.c }} />
-            <feComposite in2="dots" operator="in" />
+            <feComposite in2="soft" operator="in" />
           </filter>
         ))}
       </defs>
@@ -445,7 +481,7 @@ function Satin({ text, g, id, tint, m, light }: VP) {
 
 /* ---- 8 · Mirror: the word stands on a floor and fades away underneath -------------------------------------------- */
 
-function Mirror({ text, g, id, tint, m, light }: VP) {
+function Mirror({ text, g, id, tint, light }: VP) {
   const hi = bright(tint, light);
   const gap = 10;
   return (
@@ -454,11 +490,15 @@ function Mirror({ text, g, id, tint, m, light }: VP) {
         <VGrad id={`${id}f`} g={g} stops={[[0, hi, 0.5], [0.6, tint.c1, 0.2], [1, tint.c1, 0.06]]} />
         {/* Local to the flipped copy: the baseline end is the near end of the reflection. */}
         <VGrad id={`${id}r`} g={g} stops={[[0, tint.c2, 0], [1, tint.c2, 0.26]]} />
-        <Blur id={`${id}b`} g={g} sd={14} />
         <Blur id={`${id}b2`} g={g} sd={1.6} />
+        {/* The floor: a hairline that is brightest in the middle and fades to nothing at both ends. */}
+        <linearGradient id={`${id}l`} gradientUnits="userSpaceOnUse" x1={0} x2={g.textW} y1={0} y2={0}>
+          <stop offset={0} style={{ stopColor: hi, stopOpacity: 0 }} />
+          <stop offset={0.5} style={{ stopColor: hi, stopOpacity: 0.85 }} />
+          <stop offset={1} style={{ stopColor: hi, stopOpacity: 0 }} />
+        </linearGradient>
       </defs>
-      <ellipse cx={g.textW / 2} cy={SIZE + gap * 0.6} rx={g.textW * 0.46} ry={13} filter={url(`${id}b`)}
-        style={{ fill: tint.c1, opacity: 0.3, ...anim(m, 'fw-h-breathe 6s ease-in-out infinite alternate') }} />
+      <rect x={0} y={SIZE + gap / 2 - 1.2} width={g.textW} height={2.4} style={{ fill: url(`${id}l`) }} />
       <g transform={`translate(0 ${SIZE * 2 + gap}) scale(1 -1)`}>
         <Word text={text} fill={url(`${id}r`)} filter={url(`${id}b2`)} />
       </g>
@@ -675,11 +715,15 @@ interface HeroTitleProps {
   replay?: number;
   /** How much of the cap height the children reach up into (0 to 1). */
   overlap?: number;
+  /** Stretch the word to this visible width in px by widening the gap between letters (the size stays). */
+  spread?: number;
+  /** Stretch the capitals to exactly this box (px), each axis on its own: the letters are drawn taller or wider than they are. */
+  fit?: { w: number; h: number };
   className?: string;
   children?: ReactNode;
 }
 
-export default function HeroTitle({ word, variant, tint = SKIN_TINT, size = 88, crop = true, replay = 0, overlap = 0.38, className = '', children }: HeroTitleProps) {
+export default function HeroTitle({ word, variant, tint = SKIN_TINT, size = 88, crop = true, replay = 0, overlap = 0.38, spread = 0, fit, className = '', children }: HeroTitleProps) {
   const m = useMotion();
   const { settings } = useDisplay();
   const outer = useRef<HTMLDivElement>(null);
@@ -689,7 +733,7 @@ export default function HeroTitle({ word, variant, tint = SKIN_TINT, size = 88, 
   const id = useId().replace(/:/g, '');
   const text = word.toUpperCase();
   const below = variant === 'mirror' ? CAP_H + 10 : 0;
-  const { probe, geom, ready } = useGeom(text, below);
+  const { probe, baseProbe, geom, ready, spacing } = useGeom(text, below, spread > 0 ? (spread * SIZE) / size : 0);
 
   // The display scale: list size is fixed (the column crops it); page size shrinks to the width it is given.
   const [width, setWidth] = useState(0);
@@ -700,9 +744,17 @@ export default function HeroTitle({ word, variant, tint = SKIN_TINT, size = 88, 
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  const k = crop || !width ? size / SIZE : Math.min(size / SIZE, width / geom.textW);
+  // A stretched word is as wide as asked, unless it is already wider at this size: then it shrinks to that width.
+  const k = spread > 0
+    ? Math.min(size / SIZE, spread / geom.textW)
+    : crop || !width ? size / SIZE : Math.min(size / SIZE, width / geom.textW);
 
-  const slideAmp = crop && !OWN_SCROLL.includes(variant) ? 90 * m.parallax : 0;
+  // Fitted to a box: the width and the height scale separately (the svg then ignores its aspect ratio).
+  const fitting = !!fit && fit.w > 0 && fit.h > 0;
+  const kx = fitting ? fit.w / geom.textW : k;
+  const ky = fitting ? fit.h / CAP_H : k;
+
+  const slideAmp = crop && !fitting && !OWN_SCROLL.includes(variant) ? 90 * m.parallax : 0;
   const slideX = useTransform(scrollYProgress, (p) => (0.5 - p) * 2 * slideAmp);
 
   const Variant = VARIANTS[variant];
@@ -719,28 +771,33 @@ export default function HeroTitle({ word, variant, tint = SKIN_TINT, size = 88, 
       <motion.div
         aria-hidden
         className="pointer-events-none relative z-0 select-none"
-        style={{ x: slideX, width: geom.vw * k, marginLeft: -PAD * k }}
+        style={{ x: slideX, width: geom.vw * kx, marginLeft: -PAD * kx }}
       >
         <svg
           viewBox={`${geom.vx} ${geom.vy} ${geom.vw} ${geom.vh}`}
-          width="100%"
+          width={fitting ? geom.vw * kx : '100%'}
+          height={fitting ? geom.vh * ky : undefined}
+          preserveAspectRatio={fitting ? 'none' : undefined}
           focusable="false"
           style={{ display: 'block', overflow: 'visible', opacity: ready ? 1 : 0, transition: 'opacity 0.6s ease' }}
         >
-          <text ref={probe} x={0} y={SIZE} style={{ ...TEXT_STYLE, visibility: 'hidden' }}>{text}</text>
-          <Variant
-            key={key}
-            text={text}
-            g={geom}
-            id={id}
-            tint={tint}
-            m={m}
-            light={settings.light}
-            live={inView}
-            px={px}
-            py={py}
-            progress={scrollYProgress}
-          />
+          <text ref={baseProbe} x={0} y={SIZE} style={{ ...TEXT_STYLE, visibility: 'hidden' }}>{text}</text>
+          <text ref={probe} x={0} y={SIZE} style={{ ...TEXT_STYLE, letterSpacing: `${spacing}px`, visibility: 'hidden' }}>{text}</text>
+          <SpacingCtx.Provider value={spacing}>
+            <Variant
+              key={key}
+              text={text}
+              g={geom}
+              id={id}
+              tint={tint}
+              m={m}
+              light={settings.light}
+              live={inView}
+              px={px}
+              py={py}
+              progress={scrollYProgress}
+            />
+          </SpacingCtx.Provider>
         </svg>
       </motion.div>
       {children !== undefined && (

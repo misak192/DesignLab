@@ -37,7 +37,7 @@ export const HERO_INFO: Record<HeroStyle, HeroInfo> = {
   airbrush: {
     name: 'Airbrush',
     tags: ['Etheric'],
-    note: 'Spray-paint grain: dense at the top of each letter, thinning to nothing below. Pure fill, no edge anywhere.',
+    note: 'Soft spray-paint: a fine grain, dense at the top of each letter, melting away below. Pure fill, no edge anywhere.',
     motion: 'NORMAL: one pass, breathing. COLOUR: a second pass in another colour. OTT: three passes.',
   },
   smoke: {
@@ -67,8 +67,8 @@ export const HERO_INFO: Record<HeroStyle, HeroInfo> = {
   mirror: {
     name: 'Mirror',
     tags: ['Premium'],
-    note: 'The word stands on a floor. Its reflection fades away underneath, with a soft glow at the base.',
-    motion: 'Only the glow breathes; the reflection is the design. Needs a little more room below.',
+    note: 'The word stands on a floor, a single hairline. Its reflection fades away underneath.',
+    motion: 'Still: the reflection is the design. Needs a little more room below.',
   },
   aurora: {
     name: 'Aurora',
