@@ -28,6 +28,8 @@ Michal keeps an agenda artefact in Claude that lists all FrissonWorks artefacts;
 | `/hero-titles` | Thirteen **fill-only** designs for the hero title (the huge name behind a list or page; the Nexus's stripes redrawn as light): Mist, Radiance, Airbrush, Smoke, Veil, Glass, Satin, Mirror, Aurora, Prism, Slice, Depth, Long shadow. Shown at Nexus list size (88px, cropped by the column) or page size. Pick word, colours (project / skin), size and a tag; "Use as FW default" saves the design (`hero` setting) and the home page draws its title with it. |
 | `/backgrounds` | Light in the lab. Tab **Threads**: seven ways a comment box lights up while you write in it (none, line, spotlight, mesh, theme gradient, aurora, **stars**); "Use in comments" saves the choice. Tab **Page**: the WebGL page backgrounds. |
 
+| `/arrivals` | Nine ways for a page to arrive in real 3D (was `/3d-depth`, which redirects): Depth, Stamp, Parallax slide, Cinematic, Swing, Flip up, Converge, Poster reveal, Focus pull. Timing: Together / Delayed (back to front) / Chaotic (random starts). Knobs: Duration 0–10 s, signed Start Z (negative = from the back), Rest depth, Parallax (pointer moves the vanishing point). Arrival maths is pure in `src/lib/arrivals/arrivals.ts`; UI in `src/components/arrivals/ArrivalsLab.tsx`. No pitch tilt by design. |
+
 **Add an experiment:** create `src/app/<name>/page.tsx`, then add one object to `EXPERIMENTS` in `src/lib/experiments.ts`. The home page picks it up.
 
 ## Layout

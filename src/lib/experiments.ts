@@ -87,10 +87,10 @@ export const EXPERIMENTS: Experiment[] = [
     tag: 'Optics · Filter',
   },
   {
-    href: '/3d-depth',
-    title: '3D Depth',
-    blurb: 'Layers that tilt and separate along the Z-axis as you scroll, with letter-coded type floating between them.',
-    tag: '3D · Scroll',
+    href: '/arrivals',
+    title: 'Arrivals',
+    blurb: 'Nine ways for a page to arrive in 3D depth: stamped, swung, focused, cinematic. Together, delayed or chaotic, from the front or the back.',
+    tag: '3D · Arrival',
   },
   {
     href: '/trails',

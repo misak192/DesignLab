@@ -28,7 +28,7 @@ const PAGES = [
   { href: '/charts', label: 'Letter Charts' },
   { href: '/gestures', label: 'Spring Gestures' },
   { href: '/glass', label: 'Glass Refraction' },
-  { href: '/3d-depth', label: '3D Depth' },
+  { href: '/arrivals', label: 'Arrivals' },
   { href: '/trails', label: 'Touch Trails' },
   { href: '/page-transitions', label: 'Page Transitions' },
 ];
