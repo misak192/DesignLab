@@ -104,4 +104,10 @@ export const EXPERIMENTS: Experiment[] = [
     blurb: 'Light-leak and curtain wipes between pages with an authentic film-grain overlay texture.',
     tag: 'Cinematic · Pacing',
   },
+  {
+    href: '/tab-selection',
+    title: 'Tab Selection',
+    blurb: 'Thirty-six borderless ways to show the selected tab: lines, colour, light, glitch, letters, breathing and dust. Pick a favourite.',
+    tag: 'Type · Motion',
+  },
 ];

@@ -367,3 +367,51 @@ body[data-kinematics="off"] *::after {
   to { opacity: 1; filter: blur(0.5px); transform: none; }
 }
 @keyframes fw-h-wave { from { opacity: 0.6; } to { opacity: 1; } }
+
+/* ---- tab selection study (src/components/tabstudy, /tab-selection) ------------------------------------------------ */
+/* A tab: no border, no fill. The resting colour is an opaque mix of INK over the canvas (never alpha), `--ts-rest` per option.
+   A class rather than utilities, because the button reset above would override size and colour utilities. */
+.fw-ts-tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 2px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: color-mix(in srgb, var(--ink) var(--ts-rest, 40%), var(--canvas));
+  transition: color 0.3s var(--ease);
+}
+.fw-ts-tab:hover { color: color-mix(in srgb, var(--ink) 70%, var(--canvas)); }
+.fw-ts-tab[aria-selected="true"] { color: var(--ink); }
+/* Motion off: every option is the same plain colour change. */
+.fw-ts-tab[data-plain="true"][aria-selected="true"] { color: var(--t1); }
+
+/* The Pick / Clear text button: quiet, underlined on point. */
+.fw-pick {
+  min-height: 48px;
+  padding: 0 2px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  text-decoration: underline transparent;
+  text-underline-offset: 4px;
+  transition: color 0.25s var(--ease), text-decoration-color 0.25s var(--ease);
+}
+.fw-pick:hover { color: var(--ink); text-decoration-color: currentColor; }
+
+/* 08 Hue cycle: the colour drifts through the skin palette. 32 Breathing brightness: two opaque mixes of INK. */
+@keyframes fw-ts-hue {
+  0%, 100% { color: var(--t1); }
+  33% { color: var(--t2); }
+  66% { color: var(--t3); }
+}
+.fw-ts-hue { animation: fw-ts-hue 9s linear infinite; }
+@keyframes fw-ts-breathe {
+  0%, 100% { color: color-mix(in srgb, var(--ink) 70%, var(--canvas)); }
+  50% { color: var(--ink); }
+}
+.fw-ts-breathe { animation: fw-ts-breathe 3s ease-in-out infinite; }
