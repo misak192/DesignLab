@@ -581,3 +581,57 @@ body.light-mode { --dot-glass: 120 132 170; }
   from { clip-path: inset(-40px 100% -40px 0); }
   to { clip-path: inset(-40px -40px -40px 0); }
 }
+
+/* ---- landing and categories (src/components/landing, /, /category/<id>, /landing) -------------------------------- */
+/* The search: a quiet button, and a line to type on. No box; a hairline under the words. A class because of the button reset. */
+.fw-search__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  min-width: 48px;
+  justify-content: center;
+  color: var(--ink-2);
+  transition: color 0.25s var(--ease);
+}
+.fw-search__button:hover { color: var(--ink); }
+.fw-search__input {
+  min-width: 0;
+  width: min(34ch, 60vw);
+  min-height: 48px;
+  padding: 0 2px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rail);
+  outline: none;
+  font-size: 1.0625rem;
+  font-weight: 300;
+  caret-color: var(--t1);
+  transition: border-color 0.25s var(--ease);
+}
+.fw-search__input:focus { border-bottom-color: var(--t1); }
+.fw-search__input::placeholder { color: var(--ink-3); }
+
+/* ---- lines and rays (src/components/lines, /lines) ----------------------------------------------------------------- */
+/* A piece of light travelling along a line. --len is the line's length and --seg the piece's, both set inline. */
+@keyframes fw-ln-run-h { from { transform: translateX(calc(var(--seg) * -1)); } to { transform: translateX(var(--len)); } }
+@keyframes fw-ln-run-v { from { transform: translateY(var(--seg)); } to { transform: translateY(calc(var(--len) * -1)); } }
+/* A star field sliding along its own repeat length (--tile), so the loop has no seam. */
+@keyframes fw-ln-drift-h { to { transform: translateX(calc(var(--tile) * -1)); } }
+@keyframes fw-ln-drift-v { to { transform: translateY(var(--tile)); } }
+/* A particle leaving the line and thinning out. */
+@keyframes fw-ln-shed {
+  0% { opacity: 0; transform: translate(0, 0) scale(1); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4); }
+}
+/* A glitch: the layer jumps sideways for a moment, then sits still. */
+@keyframes fw-ln-glitch {
+  0%, 90%, 100% { transform: translate(0, 0); }
+  92% { transform: translate(var(--gx), var(--gy)); }
+  96% { transform: translate(calc(var(--gx) * -0.6), calc(var(--gy) * -0.4)); }
+}
+/* A scanning line moving back and forth across its own width. */
+@keyframes fw-ln-sweep { 0%, 100% { transform: translate(var(--sx0), var(--sy0)); } 50% { transform: translate(var(--sx1), var(--sy1)); } }
+/* A star at rest drifts a little. */
+@keyframes fw-ln-float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(var(--fx), var(--fy)); } }

@@ -30,9 +30,9 @@ export const COLOURS = [
   { id: 'amber', label: 'Amber', hex: PALETTE.amber },
 ] as const;
 export const SHIFTS = [
-  { id: 'subtle', label: 'Subtle', amt: 24 },
+  { id: 'subtle', label: 'Subtle', amt: 12 },
   { id: 'medium', label: 'Medium', amt: 48 },
-  { id: 'strong', label: 'Strong', amt: 80 },
+  { id: 'strong', label: 'Strong', amt: 110 },
 ] as const;
 
 export interface DotSettings {

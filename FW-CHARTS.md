@@ -4,14 +4,14 @@ Decided in the FrissonWorks Design Lab (Chart Elements → Charts tab), 1 Nov 20
 
 ## Paste this into another chat
 
-> Build FW charts from `FW-CHARTS.md` in the fw-design-lab repo (C:\Users\micha\VS Code\fw-design-lab). Support all five styles, with **airbrush gradient as the default**. Settings: `chartStyle` (airbrush | gradient-shadow-glow | halftone | tint-bleed | glass-over-colour, default airbrush), `shift` (subtle 24 | medium 48 | strong 80, default medium), `arrival` (pop-in | none, default pop-in). Read the recipes, the shared rules and the code files above before writing anything. Keep every style cheap: gradients, masks and stacked strokes only, no blur filter and no backdrop-filter, and only transform and opacity animated. Follow MOTION: when it is off, draw at rest.
+> Build FW charts from `FW-CHARTS.md` in the fw-design-lab repo (C:\Users\micha\VS Code\fw-design-lab). Support all five styles, with **airbrush gradient as the default**. Settings: `chartStyle` (airbrush | gradient-shadow-glow | halftone | tint-bleed | glass-over-colour, default airbrush), `shift` (subtle 12 | medium 48 | strong 110, default medium), `arrival` (pop-in | none, default pop-in). Read the recipes, the shared rules and the code files above before writing anything. Keep every style cheap: gradients, masks and stacked strokes only, no blur filter and no backdrop-filter, and only transform and opacity animated. Follow MOTION: when it is off, draw at rest.
 
 ## Settings
 
 | Setting | Values | Default |
 | --- | --- | --- |
 | `chartStyle` | `airbrush`, `gradient-shadow-glow`, `halftone`, `tint-bleed`, `glass-over-colour` | **`airbrush`** |
-| `shift` | subtle 24, medium 48, strong 80 | medium |
+| `shift` | subtle 12, medium 48, strong 110 | medium |
 | `arrival` | `pop-in`, `none` | `pop-in` |
 
 Three chart types in every style, on the same data: a **line** (two series), a **stacked bar** (three series), a **scatter** (24 points, three groups, each with a size). Series colours: cyan `#5FF6FF`, violet `#8B5CF6`, magenta `#FF5BD6` (amber `#FFB84D` is the fourth).

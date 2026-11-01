@@ -26,6 +26,14 @@ export type TypeStyle = (typeof TYPE_STYLES)[number];
 export const CARD_STYLES = ['line', 'index', 'spotlight', 'tilt', 'echo'] as const;
 export type CardStyle = (typeof CARD_STYLES)[number];
 
+/** How the categories on the home page are laid out (chosen on /landing). */
+export const LANDING_STYLES = ['index', 'cards', 'poster', 'compact'] as const;
+export type LandingStyle = (typeof LANDING_STYLES)[number];
+
+/** The welcome at the top of the home page (chosen on /landing). */
+export const WELCOME_STYLES = ['full', 'compact', 'off'] as const;
+export type WelcomeStyle = (typeof WELCOME_STYLES)[number];
+
 /** How a hero title (the huge name behind the text) is drawn (chosen on /hero-titles). */
 export const HERO_STYLES = [
   'mist', 'radiance', 'airbrush', 'smoke', 'veil', 'glass', 'satin', 'mirror', 'aurora', 'prism', 'slice', 'depth', 'longshade',
@@ -49,6 +57,8 @@ export interface DisplaySettings {
   card: CardStyle;
   glow: GlowStyle;
   hero: HeroStyle;
+  landing: LandingStyle;
+  welcome: WelcomeStyle;
 }
 
 export const DEFAULT_SETTINGS: DisplaySettings = {
@@ -63,6 +73,8 @@ export const DEFAULT_SETTINGS: DisplaySettings = {
   card: 'line',
   glow: 'stars',
   hero: 'mist',
+  landing: 'index',
+  welcome: 'full',
 };
 
 const includes = <T extends string>(list: readonly T[], value: unknown): value is T =>
@@ -84,6 +96,8 @@ export function sanitizeSettings(raw: unknown): DisplaySettings {
     card: includes(CARD_STYLES, r.card) ? r.card : d.card,
     glow: includes(GLOW_STYLES, r.glow) ? r.glow : d.glow,
     hero: includes(HERO_STYLES, r.hero) ? r.hero : d.hero,
+    landing: includes(LANDING_STYLES, r.landing) ? r.landing : d.landing,
+    welcome: includes(WELCOME_STYLES, r.welcome) ? r.welcome : d.welcome,
   };
 }
 

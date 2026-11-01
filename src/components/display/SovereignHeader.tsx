@@ -3,7 +3,7 @@
  * Description: The Sovereign header from LoreLyst, for the Design Lab: a profile glyph top right that opens a panel
  * of plain settings rows (label small on the left, value large on the right, nothing behind either). Each row
  * cycles its setting when tapped: LIGHT, SKIN, MOTION, TEXT, TYPE, BG (intensity + background), SHADOW. Then links
- * to every page of the lab. No accounts here, so no sign-in. The settings are saved in this browser only.
+ * to Home and to every category of the lab. No accounts here, so no sign-in. The settings are saved in this browser only.
  */
 "use client";
 import { useEffect, useRef, useState } from 'react';
@@ -12,26 +12,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useDisplay, useMotion } from './DisplayProvider';
 import { transitionFor } from '@/lib/motion/presets';
 import { BG_ENGINES, BG_INTENSITIES, BG_LABEL } from '@/lib/display/background/engines';
+import { CATEGORIES } from '@/lib/experiments';
 import { MOTION_LEVELS, SKINS, TEXT_SCALES, TYPE_STYLES, nextOf } from '@/lib/display/settings';
 
-const PAGES = [
-  { href: '/', label: 'Home' },
-  { href: '/comments', label: 'Comments' },
-  { href: '/motion', label: 'Motion' },
-  { href: '/cards', label: 'Cards' },
-  { href: '/hero-titles', label: 'Hero titles' },
-  { href: '/backgrounds', label: 'Backgrounds' },
-  { href: '/notifications', label: 'Notifications' },
-  { href: '/fluid-smoke', label: 'Fluid Shaders' },
-  { href: '/shared-elements', label: 'Shared Elements' },
-  { href: '/type-dissolve', label: 'Type Dissolve' },
-  { href: '/charts', label: 'Letter Charts' },
-  { href: '/gestures', label: 'Spring Gestures' },
-  { href: '/glass', label: 'Glass Refraction' },
-  { href: '/arrivals', label: 'Arrivals' },
-  { href: '/trails', label: 'Touch Trails' },
-  { href: '/page-transitions', label: 'Page Transitions' },
-];
+/** Home, then the categories: each opens a page listing its experiments. */
+const PAGES = [{ href: '/', label: 'Home' }, ...CATEGORIES.map((c) => ({ href: `/category/${c.id}`, label: c.name }))];
 
 /* The profile glyph, as drawn in the Claude Design files: a head and shoulders, 1.4 stroke. */
 function ProfileGlyph() {
