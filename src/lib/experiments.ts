@@ -110,4 +110,10 @@ export const EXPERIMENTS: Experiment[] = [
     blurb: 'Thirty-six borderless ways to show the selected tab: lines, colour, light, glitch, letters, breathing and dust. Pick a favourite.',
     tag: 'Type · Motion',
   },
+  {
+    href: '/experiments/chart-elements',
+    title: 'Chart Elements',
+    blurb: 'Thirty see-through chart elements in three families: dots, squares and stacked segments. Compare them at real size and pick one for every chart.',
+    tag: 'Data · Light',
+  },
 ];

@@ -415,3 +415,169 @@ body[data-kinematics="off"] *::after {
   50% { color: var(--ink); }
 }
 .fw-ts-breathe { animation: fw-ts-breathe 3s ease-in-out infinite; }
+
+/* ---- Lab Master skeleton (src/components/master, /master) --------------------------------------------------------- */
+/* An option in a settings row: quiet, uppercase, lit in T1 when it is the current one. A class because of the button reset. */
+.fw-opt {
+  min-height: 48px;
+  padding: 0 10px 0 0;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.3s var(--ease);
+}
+.fw-opt:hover { color: var(--ink); }
+.fw-opt[aria-checked="true"] { color: var(--t1); }
+
+/* A placeholder button: type only. */
+.fw-sk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 48px;
+  min-width: 48px;
+  justify-content: center;
+  padding: 0 6px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: color 0.3s var(--ease);
+}
+.fw-sk-btn:hover { color: var(--ink); }
+.fw-sk-btn[data-kind="primary"] { color: var(--t1); }
+.fw-sk-btn[data-kind="primary"]:hover { color: var(--ink); }
+.fw-sk-btn[aria-checked="true"] { color: var(--t1); }
+.fw-sk-btn:disabled { color: var(--ink-3); cursor: default; }
+
+/* ---- chart elements study (src/components/chartstudy, /experiments/chart-elements) ------------------------------- */
+/* An element is see-through by a gradient tint + blur, never by lowering opacity. There are no borders or edge lines. */
+.fw-ce-el { position: relative; }
+/* A cell that is off screen is paused: entries wait until it is seen, loops stop costing frames. */
+.fw-ce[data-seen="false"] *,
+.fw-ce[data-seen="false"] *::before,
+.fw-ce[data-seen="false"] *::after { animation-play-state: paused !important; }
+.fw-ce-strip { scrollbar-width: thin; scrollbar-color: var(--rail) transparent; }
+
+/* Entries: run once and hold the last frame, which is the static look. */
+@keyframes fw-ce-sparkle {
+  0% { opacity: 0; transform: scale(0.2) rotate(-25deg); }
+  35% { opacity: 1; transform: scale(1.2) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.7) rotate(30deg); }
+}
+@keyframes fw-ce-ignite-glow { 0% { opacity: 1; transform: scale(1.9); } 100% { opacity: 0.5; transform: scale(1.3); } }
+@keyframes fw-ce-hot { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes fw-ce-ring { 0% { opacity: 0.95; transform: scale(1); } 100% { opacity: 0; transform: scale(3); } }
+@keyframes fw-ce-burst {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.4); }
+}
+@keyframes fw-ce-scan {
+  0% { opacity: 0; transform: translateY(0); }
+  12%, 85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(var(--ce-h)); }
+}
+@keyframes fw-ce-fill { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes fw-ce-rise-lit { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Loops: 2 to 6s, transform and opacity only. */
+@keyframes fw-ce-twinkle {
+  0%, 64%, 100% { opacity: 0; transform: scale(0.6); }
+  70% { opacity: 1; transform: scale(1.25); }
+  76% { opacity: 0.25; transform: scale(0.9); }
+  82% { opacity: 0.9; transform: scale(1.15); }
+  92% { opacity: 0; transform: scale(0.8); }
+}
+@keyframes fw-ce-breath { 0%, 100% { opacity: 0.35; transform: scale(0.9); } 50% { opacity: 0.8; transform: scale(1.5); } }
+@keyframes fw-ce-lit { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes fw-ce-trail { 0%, 100% { transform: scaleX(0.7); } 50% { transform: scaleX(1); } }
+@keyframes fw-ce-twinkle-slow {
+  0%, 100% { opacity: 0.55; transform: scale(0.7) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.05) rotate(45deg); }
+}
+/* Electric arcs: two shapes swap in hard steps; the whole drawing also stutters. */
+@keyframes fw-ce-flk-a { 0% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes fw-ce-flk-b { 0% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes fw-ce-zap {
+  0%, 100% { opacity: 1; }
+  8% { opacity: 0.35; }
+  14% { opacity: 1; }
+  55% { opacity: 1; }
+  60% { opacity: 0.2; }
+  64% { opacity: 0.9; }
+  78% { opacity: 0.5; }
+  82% { opacity: 1; }
+}
+@keyframes fw-ce-streak {
+  0% { transform: translateX(-130%) skewX(-20deg); }
+  45%, 100% { transform: translateX(330%) skewX(-20deg); }
+}
+@keyframes fw-ce-streak-up {
+  0% { transform: translateY(100%); }
+  45%, 100% { transform: translateY(-250%); }
+}
+@keyframes fw-ce-step { 0% { opacity: 0; } 5% { opacity: 1; } 20%, 100% { opacity: 0; } }
+@keyframes fw-ce-climb {
+  0% { opacity: 0; transform: translateY(0); }
+  6% { opacity: 1; }
+  42% { opacity: 1; transform: translateY(var(--ce-up)); }
+  52%, 100% { opacity: 0; transform: translateY(var(--ce-up)); }
+}
+@keyframes fw-ce-dust {
+  0% { opacity: 0; transform: translate(0, 0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), -12px); }
+}
+@keyframes fw-ce-rise {
+  0% { opacity: 0; transform: translate(0, 0); }
+  15% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
+}
+
+/* ---- dot study (src/components/chartstudy/dots, /experiments/chart-elements/dots) ---------------------------------- */
+/* Transform and opacity only, so a layer that moves never repaints. */
+@keyframes fw-cd-bounce {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(0.88); }
+  55% { transform: scale(1.04); }
+  75% { transform: scale(0.98); }
+}
+@keyframes fw-cd-ripple {
+  0% { opacity: 0.6; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(2.1); }
+}
+@keyframes fw-cd-turn {
+  from { transform: rotateX(58deg) rotateZ(0deg); }
+  to { transform: rotateX(58deg) rotateZ(360deg); }
+}
+@keyframes fw-cd-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8%); } }
+
+/* Blends (src/components/chartstudy/dots, /experiments/chart-elements/blends). --dot-glass is the neutral that glass dots are
+   made of: pale on the dark page, a cool grey on the light one, so tint bleed shows on both without black behind it. */
+body { --dot-glass: 232 238 249; }
+body.light-mode { --dot-glass: 120 132 170; }
+/* A layered dot arrives: each layer pops out from nothing, then the layers fade as one surface fades in over them. */
+@keyframes fw-cd-popin {
+  0% { opacity: 0; transform: scale(0); }
+  55% { opacity: 1; transform: scale(1.14); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes fw-cd-surface { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fw-cd-gone { from { opacity: 1; } to { opacity: 0; } }
+@keyframes fw-cd-spin { to { transform: rotate(360deg); } }
+
+/* Charts page (src/components/chartstudy/charts): a line that draws itself, and a column segment that rises from the baseline. */
+@keyframes fw-ch-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes fw-ch-rise {
+  0% { transform: scaleY(0); }
+  60% { transform: scaleY(1.08); }
+  100% { transform: scaleY(1); }
+}
+/* The arrival of a line: the drawing is uncovered from the left, glow and all (the negative insets keep the glow from being clipped). */
+@keyframes fw-ch-reveal {
+  from { clip-path: inset(-40px 100% -40px 0); }
+  to { clip-path: inset(-40px -40px -40px 0); }
+}
