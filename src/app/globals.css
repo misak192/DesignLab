@@ -635,3 +635,371 @@ body.light-mode { --dot-glass: 120 132 170; }
 @keyframes fw-ln-sweep { 0%, 100% { transform: translate(var(--sx0), var(--sy0)); } 50% { transform: translate(var(--sx1), var(--sy1)); } }
 /* A star at rest drifts a little. */
 @keyframes fw-ln-float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(var(--fx), var(--fy)); } }
+
+/* ---- buttons study (src/components/buttons, /buttons) ------------------------------------------------------------- */
+/* A button is a bare word: no border, no fill. `--c`, `--hi`, `--lo` are the colour and its two RGB cousins (set inline).
+   The light is gradients only (no filter, no backdrop-filter). Classes, not utilities, because of the button reset above. */
+.fw-kb {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 16px 40px;
+  isolation: isolate;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
+  transition: color 0.3s var(--ease);
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.fw-kb[data-case="sentence"] { text-transform: none; letter-spacing: 0.04em; font-size: 1.125rem; }
+.fw-kb:hover, .fw-kb:focus-visible { color: var(--ink); }
+.fw-kb__under, .fw-kb__fx { position: absolute; inset: 0; pointer-events: none; }
+.fw-kb__under { z-index: 0; }
+.fw-kb__fx { z-index: 2; overflow: visible; }
+.fw-kb__under > span { position: absolute; display: block; }
+.fw-kb__word { position: relative; z-index: 1; display: inline-flex; white-space: nowrap; }
+.fw-kb__l { display: inline-block; white-space: pre; }
+.fw-kb[data-live="false"] *, .fw-kb[data-live="false"] *::before, .fw-kb[data-live="false"] *::after { animation: none !important; }
+
+@keyframes fw-kb-breathe { from { transform: scale(0.92); } to { transform: scale(1.08); } }
+@keyframes fw-kb-pulse-o { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+@keyframes fw-kb-drift { 0%, 100% { transform: translateX(-4%) scaleX(1); } 50% { transform: translateX(4%) scaleX(1.08); } }
+@keyframes fw-kb-flow { to { background-position: 200% 0; } }
+@keyframes fw-kb-m1 { 0%, 100% { transform: translate(-30%, 0); } 50% { transform: translate(25%, -12%); } }
+@keyframes fw-kb-m2 { 0%, 100% { transform: translate(30%, 8%); } 50% { transform: translate(-25%, -6%); } }
+@keyframes fw-kb-m3 { 0%, 100% { transform: translate(0, 10%) scale(0.8); } 50% { transform: translate(8%, -10%) scale(1.2); } }
+@keyframes fw-kb-twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.1); } }
+@keyframes fw-kb-bk { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(10px, -9px); } }
+@keyframes fw-kb-tide { to { -webkit-mask-position: 48px 50%; mask-position: 48px 50%; } }
+@keyframes fw-kb-scan { from { left: 0; } to { left: 100%; } }
+@keyframes fw-kb-orbit {
+  0% { left: 100%; top: 50%; } 8.33% { left: 93.3%; top: 75%; } 16.67% { left: 75%; top: 93.3%; } 25% { left: 50%; top: 100%; }
+  33.33% { left: 25%; top: 93.3%; } 41.67% { left: 6.7%; top: 75%; } 50% { left: 0; top: 50%; } 58.33% { left: 6.7%; top: 25%; }
+  66.67% { left: 25%; top: 6.7%; } 75% { left: 50%; top: 0; } 83.33% { left: 75%; top: 6.7%; } 91.67% { left: 93.3%; top: 25%; } 100% { left: 100%; top: 50%; }
+}
+
+/* halo: a soft light behind the word that breathes; a bright core on point */
+.fw-kb[data-look="halo"] .fw-kb__a {
+  inset: -70% -26%;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, color-mix(in srgb, var(--hi) 50%, transparent), color-mix(in srgb, var(--c) 14%, transparent) 55%, transparent 74%);
+  opacity: 0.5; animation: fw-kb-breathe 4.5s ease-in-out infinite alternate; transition: opacity 0.5s var(--ease);
+}
+.fw-kb[data-look="halo"] .fw-kb__b {
+  inset: 22% 14%;
+  background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, #fff 38%, var(--hi)), transparent 70%);
+  opacity: 0; transition: opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="halo"]:hover .fw-kb__a, .fw-kb[data-look="halo"]:focus-visible .fw-kb__a { opacity: 1; }
+.fw-kb[data-look="halo"]:hover .fw-kb__b, .fw-kb[data-look="halo"]:focus-visible .fw-kb__b { opacity: 0.55; }
+
+/* ember: a warm band and a streak of light drifting through the word */
+.fw-kb[data-look="ember"] .fw-kb__a {
+  inset: -30% -34%;
+  background: radial-gradient(ellipse 50% 22% at 50% 50%, color-mix(in srgb, var(--hi) 55%, transparent), transparent 72%);
+  opacity: 0.55; animation: fw-kb-drift 5s ease-in-out infinite; transition: inset 0.5s var(--ease), opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="ember"] .fw-kb__b {
+  left: -30%; right: -30%; top: 50%; height: 2px; margin-top: -1px;
+  background: linear-gradient(90deg, transparent, var(--hi) 30%, #fff 50%, var(--hi) 70%, transparent);
+  opacity: 0.4; animation: fw-kb-drift 4s ease-in-out infinite reverse; transition: left 0.5s var(--ease), right 0.5s var(--ease), opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="ember"]:hover .fw-kb__a, .fw-kb[data-look="ember"]:focus-visible .fw-kb__a { inset: -30% -46%; opacity: 1; }
+.fw-kb[data-look="ember"]:hover .fw-kb__b, .fw-kb[data-look="ember"]:focus-visible .fw-kb__b { left: -46%; right: -46%; opacity: 0.95; }
+
+/* ribbon: two hairlines of flowing colour above and below, a wash of colour at their feet */
+.fw-kb[data-look="ribbon"] .fw-kb__a, .fw-kb[data-look="ribbon"] .fw-kb__b {
+  left: -4%; right: -4%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c) 25%, var(--hi) 50%, var(--c) 75%, transparent) 0 0 / 200% 100%;
+  animation: fw-kb-flow 4s linear infinite; transition: left 0.5s var(--ease), right 0.5s var(--ease);
+}
+.fw-kb[data-look="ribbon"] .fw-kb__a { top: 4px; }
+.fw-kb[data-look="ribbon"] .fw-kb__b { bottom: 4px; animation-direction: reverse; }
+.fw-kb[data-look="ribbon"] .fw-kb__c {
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 100% at 50% 100%, color-mix(in srgb, var(--c) 24%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 100% at 50% 0, color-mix(in srgb, var(--c) 12%, transparent), transparent 70%);
+  opacity: 0.55; transition: opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="ribbon"]:hover .fw-kb__a, .fw-kb[data-look="ribbon"]:hover .fw-kb__b,
+.fw-kb[data-look="ribbon"]:focus-visible .fw-kb__a, .fw-kb[data-look="ribbon"]:focus-visible .fw-kb__b { left: -16%; right: -16%; }
+.fw-kb[data-look="ribbon"]:hover .fw-kb__c, .fw-kb[data-look="ribbon"]:focus-visible .fw-kb__c { opacity: 1; }
+
+/* underline: a dot under the word that draws into a hairline on point, with light under it */
+.fw-kb[data-look="underline"] .fw-kb__a {
+  left: 12%; right: 12%; bottom: 8px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hi), transparent);
+  transform: scaleX(0.1); opacity: 0.7; transition: transform 0.6s var(--ease), opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="underline"] .fw-kb__b {
+  left: 20%; right: 20%; bottom: -6px; height: 16px;
+  background: radial-gradient(ellipse 50% 50% at 50% 0, color-mix(in srgb, var(--hi) 55%, transparent), transparent 75%);
+  opacity: 0; transition: opacity 0.5s var(--ease);
+}
+.fw-kb[data-look="underline"]:hover .fw-kb__a, .fw-kb[data-look="underline"]:focus-visible .fw-kb__a { transform: scaleX(1); opacity: 1; }
+.fw-kb[data-look="underline"]:hover .fw-kb__b, .fw-kb[data-look="underline"]:focus-visible .fw-kb__b { opacity: 0.9; }
+
+/* cursor: two hairlines close in on the word and two small diamonds light up */
+.fw-kb[data-look="cursor"] .fw-kb__a, .fw-kb[data-look="cursor"] .fw-kb__b {
+  top: 50%; height: 1px; width: 18px; animation: fw-kb-pulse-o 2.4s ease-in-out infinite; transition: width 0.5s var(--ease);
+}
+.fw-kb[data-look="cursor"] .fw-kb__a { left: 0; background: linear-gradient(90deg, transparent, var(--hi)); }
+.fw-kb[data-look="cursor"] .fw-kb__b { right: 0; background: linear-gradient(270deg, transparent, var(--hi)); }
+.fw-kb[data-look="cursor"] .fw-kb__c, .fw-kb[data-look="cursor"] .fw-kb__d {
+  top: 50%; width: 6px; height: 6px; margin-top: -3px; background: var(--hi); transform: rotate(45deg);
+  box-shadow: 0 0 12px var(--hi); opacity: 0; transition: left 0.5s var(--ease), right 0.5s var(--ease), opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="cursor"] .fw-kb__c { left: -6px; }
+.fw-kb[data-look="cursor"] .fw-kb__d { right: -6px; }
+.fw-kb[data-look="cursor"]:hover .fw-kb__a, .fw-kb[data-look="cursor"]:hover .fw-kb__b,
+.fw-kb[data-look="cursor"]:focus-visible .fw-kb__a, .fw-kb[data-look="cursor"]:focus-visible .fw-kb__b { width: 34px; }
+.fw-kb[data-look="cursor"]:hover .fw-kb__c, .fw-kb[data-look="cursor"]:focus-visible .fw-kb__c { left: 30px; opacity: 1; }
+.fw-kb[data-look="cursor"]:hover .fw-kb__d, .fw-kb[data-look="cursor"]:focus-visible .fw-kb__d { right: 30px; opacity: 1; }
+
+/* mist: three clouds of colour drift behind the word (gradients, no blur) */
+.fw-kb[data-look="mist"] .fw-kb__a, .fw-kb[data-look="mist"] .fw-kb__b, .fw-kb[data-look="mist"] .fw-kb__c { top: -30%; height: 160%; opacity: 0.55; transition: opacity 0.5s var(--ease); }
+.fw-kb[data-look="mist"] .fw-kb__a { left: -6%; width: 62%; background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--c) 55%, transparent), transparent 68%); animation: fw-kb-m1 7s ease-in-out infinite; }
+.fw-kb[data-look="mist"] .fw-kb__b { left: 34%; width: 66%; background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--lo) 50%, transparent), transparent 68%); animation: fw-kb-m2 9s ease-in-out infinite; }
+.fw-kb[data-look="mist"] .fw-kb__c { left: 18%; top: -60%; width: 54%; height: 220%; background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--hi) 42%, transparent), transparent 68%); animation: fw-kb-m3 6s ease-in-out infinite; }
+.fw-kb[data-look="mist"]:hover .fw-kb__a, .fw-kb[data-look="mist"]:hover .fw-kb__b, .fw-kb[data-look="mist"]:hover .fw-kb__c,
+.fw-kb[data-look="mist"]:focus-visible .fw-kb__a, .fw-kb[data-look="mist"]:focus-visible .fw-kb__b, .fw-kb[data-look="mist"]:focus-visible .fw-kb__c { opacity: 1; }
+
+/* stars: a few stars twinkle round the word (drawn after mount) */
+.fw-kb[data-look="stars"] .fw-kb__a {
+  inset: -40% -14%; background: radial-gradient(ellipse 50% 50% at 50% 50%, color-mix(in srgb, var(--c) 22%, transparent), transparent 70%);
+  opacity: 0.55; transition: opacity 0.5s var(--ease);
+}
+.fw-kb[data-look="stars"]:hover .fw-kb__a, .fw-kb[data-look="stars"]:focus-visible .fw-kb__a { opacity: 1; }
+.fw-kb__star {
+  position: absolute; left: var(--sx); top: var(--sy); width: var(--ss); height: var(--ss); margin: calc(var(--ss) / -2) 0 0 calc(var(--ss) / -2);
+  background:
+    radial-gradient(circle, #fff 0 14%, var(--hi) 28%, transparent 62%),
+    linear-gradient(90deg, transparent 8%, var(--hi) 50%, transparent 92%) center / 100% 8% no-repeat,
+    linear-gradient(0deg, transparent 8%, var(--hi) 50%, transparent 92%) center / 8% 100% no-repeat;
+  animation: fw-kb-twinkle var(--sd) ease-in-out infinite; animation-delay: var(--sl);
+}
+
+/* bokeh: four soft discs with a brighter rim drift behind the word and swell on point */
+.fw-kb[data-look="bokeh"] .fw-kb__a, .fw-kb[data-look="bokeh"] .fw-kb__b, .fw-kb[data-look="bokeh"] .fw-kb__c, .fw-kb[data-look="bokeh"] .fw-kb__d {
+  border-radius: 50%; scale: 1; transition: scale 0.6s var(--ease);
+}
+.fw-kb[data-look="bokeh"] .fw-kb__a { left: -6%; top: -34%; width: 46px; height: 46px; background: radial-gradient(circle, color-mix(in srgb, var(--c) 18%, transparent) 0, color-mix(in srgb, var(--c) 24%, transparent) 52%, color-mix(in srgb, var(--hi) 60%, transparent) 61%, transparent 68%); animation: fw-kb-bk 8s ease-in-out infinite; }
+.fw-kb[data-look="bokeh"] .fw-kb__b { right: -4%; top: 22%; width: 30px; height: 30px; background: radial-gradient(circle, color-mix(in srgb, var(--hi) 20%, transparent) 0, color-mix(in srgb, var(--hi) 26%, transparent) 52%, color-mix(in srgb, #fff 55%, transparent) 61%, transparent 68%); animation: fw-kb-bk 6s ease-in-out infinite reverse; }
+.fw-kb[data-look="bokeh"] .fw-kb__c { left: 38%; bottom: -46%; width: 38px; height: 38px; background: radial-gradient(circle, color-mix(in srgb, var(--lo) 20%, transparent) 0, color-mix(in srgb, var(--lo) 26%, transparent) 52%, color-mix(in srgb, var(--lo) 70%, transparent) 61%, transparent 68%); animation: fw-kb-bk 9s ease-in-out infinite; }
+.fw-kb[data-look="bokeh"] .fw-kb__d { left: 64%; top: -40%; width: 20px; height: 20px; background: radial-gradient(circle, color-mix(in srgb, var(--c) 22%, transparent) 0, color-mix(in srgb, var(--c) 30%, transparent) 52%, color-mix(in srgb, var(--c) 70%, transparent) 61%, transparent 68%); animation: fw-kb-bk 7s ease-in-out infinite reverse; }
+.fw-kb[data-look="bokeh"]:hover .fw-kb__a, .fw-kb[data-look="bokeh"]:hover .fw-kb__b, .fw-kb[data-look="bokeh"]:hover .fw-kb__c, .fw-kb[data-look="bokeh"]:hover .fw-kb__d,
+.fw-kb[data-look="bokeh"]:focus-visible .fw-kb__a, .fw-kb[data-look="bokeh"]:focus-visible .fw-kb__c { scale: 1.35; }
+
+/* sheen: the letters themselves carry a gradient that slides through them on point */
+.fw-kb[data-look="sheen"] .fw-kb__word {
+  background-image: linear-gradient(100deg, var(--ink) 30%, var(--hi) 50%, var(--ink) 70%);
+  background-size: 250% 100%; background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  text-shadow: none; -webkit-text-stroke: 0; filter: var(--halo-drop);
+  transition: background-position 1.2s var(--ease);
+}
+.fw-kb[data-look="sheen"]:hover .fw-kb__word, .fw-kb[data-look="sheen"]:focus-visible .fw-kb__word { background-position: 0 0; }
+.fw-kb[data-look="sheen"] .fw-kb__a {
+  left: 20%; right: 20%; bottom: 6px; height: 12px;
+  background: radial-gradient(ellipse 50% 50% at 50% 100%, color-mix(in srgb, var(--hi) 40%, transparent), transparent 75%);
+  opacity: 0.6;
+}
+
+/* tide: two wavy lines of light run above and below the word (a repeating mask, so one element each) */
+.fw-kb[data-look="tide"] .fw-kb__a, .fw-kb[data-look="tide"] .fw-kb__b {
+  left: 8%; right: 8%; height: 8px; opacity: 0.65; transition: opacity 0.4s var(--ease), left 0.5s var(--ease), right 0.5s var(--ease);
+  background: linear-gradient(90deg, transparent, var(--hi), transparent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 8'%3E%3Cpath d='M0 4 Q12 0 24 4 T48 4' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 0 50% / 48px 8px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 8'%3E%3Cpath d='M0 4 Q12 0 24 4 T48 4' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 0 50% / 48px 8px repeat-x;
+  animation: fw-kb-tide 3s linear infinite;
+}
+.fw-kb[data-look="tide"] .fw-kb__a { top: -2px; }
+.fw-kb[data-look="tide"] .fw-kb__b { bottom: -2px; animation-direction: reverse; }
+.fw-kb[data-look="tide"]:hover .fw-kb__a, .fw-kb[data-look="tide"]:hover .fw-kb__b,
+.fw-kb[data-look="tide"]:focus-visible .fw-kb__a, .fw-kb[data-look="tide"]:focus-visible .fw-kb__b { opacity: 1; left: 0; right: 0; }
+
+/* scan: a line of light walks across the word on point; a hairline rests under it */
+.fw-kb[data-look="scan"] .fw-kb__a {
+  top: -8%; bottom: -8%; left: 0; width: 1px; opacity: 0;
+  background: linear-gradient(180deg, transparent, var(--hi) 30%, #fff 50%, var(--hi) 70%, transparent); box-shadow: 0 0 14px var(--hi);
+  transition: opacity 0.3s var(--ease);
+}
+.fw-kb[data-look="scan"] .fw-kb__b {
+  left: 25%; right: 25%; bottom: 8px; height: 1px; opacity: 0.55; transition: left 0.5s var(--ease), right 0.5s var(--ease), opacity 0.4s var(--ease);
+  background: linear-gradient(90deg, transparent, var(--c), transparent);
+}
+.fw-kb[data-look="scan"]:hover .fw-kb__a, .fw-kb[data-look="scan"]:focus-visible .fw-kb__a { opacity: 1; animation: fw-kb-scan 1.8s var(--ease) infinite; }
+.fw-kb[data-look="scan"]:hover .fw-kb__b, .fw-kb[data-look="scan"]:focus-visible .fw-kb__b { left: 8%; right: 8%; opacity: 1; }
+
+/* spot: a light follows the pointer across the word */
+.fw-kb[data-look="spot"] .fw-kb__a {
+  inset: -60px -40px;
+  background: radial-gradient(circle 90px at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--hi) 62%, transparent), color-mix(in srgb, var(--c) 16%, transparent) 55%, transparent 100%);
+  opacity: 0.3; transition: opacity 0.4s var(--ease);
+}
+.fw-kb[data-look="spot"]:hover .fw-kb__a, .fw-kb[data-look="spot"]:focus-visible .fw-kb__a { opacity: 1; }
+
+/* orbit: a small star circles the word; a second follows it */
+.fw-kb[data-look="orbit"] .fw-kb__a { inset: -26% -6%; background: radial-gradient(ellipse 50% 50% at 50% 50%, color-mix(in srgb, var(--c) 16%, transparent), transparent 70%); opacity: 0.6; transition: opacity 0.5s var(--ease); }
+.fw-kb[data-look="orbit"] .fw-kb__b, .fw-kb[data-look="orbit"] .fw-kb__c { inset: -26% -6%; }
+.fw-kb[data-look="orbit"] .fw-kb__b::after, .fw-kb[data-look="orbit"] .fw-kb__c::after {
+  content: ""; position: absolute; left: 100%; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  background:
+    radial-gradient(circle, #fff 0 14%, var(--hi) 28%, transparent 62%),
+    linear-gradient(90deg, transparent 8%, var(--hi) 50%, transparent 92%) center / 100% 8% no-repeat,
+    linear-gradient(0deg, transparent 8%, var(--hi) 50%, transparent 92%) center / 8% 100% no-repeat;
+  animation: fw-kb-orbit 6s linear infinite;
+}
+.fw-kb[data-look="orbit"] .fw-kb__c::after { width: 8px; height: 8px; margin: -4px 0 0 -4px; animation-delay: -0.45s; opacity: 0.7; }
+.fw-kb[data-look="orbit"]:hover .fw-kb__a, .fw-kb[data-look="orbit"]:focus-visible .fw-kb__a { opacity: 1; }
+.fw-kb[data-look="orbit"]:hover .fw-kb__b::after, .fw-kb[data-look="orbit"]:hover .fw-kb__c::after { animation-duration: 2.6s; }
+
+/* ---- typography lab (src/components/typography, /typography) ------------------------------------------------------ */
+/* A count: a small number raised at the top right of its word, like an exponent. No box; type, a hairline or light only.
+   `--ct` is the data colour of the word's subject (falls back to T1). */
+.fw-ct { position: relative; display: inline-block; margin-right: 1.5em; }
+.fw-ct__n {
+  position: absolute; left: 100%; top: 0; margin-left: 2px; --ty: -48%;
+  transform: translateY(var(--ty)); transform-origin: 0 100%;
+  font-size: 0.8125rem; font-weight: 500; font-style: normal; line-height: 1; letter-spacing: 0; vertical-align: baseline;
+  font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--t1); isolation: isolate;
+  animation: fw-ct-in 0.55s var(--ease) both;
+}
+@keyframes fw-ct-in {
+  from { opacity: 0; transform: translateY(var(--ty)) scale(0.4); }
+  60% { transform: translateY(var(--ty)) scale(1.25); }
+  to { opacity: 1; transform: translateY(var(--ty)) scale(1); }
+}
+.fw-ct[data-v="colour"] .fw-ct__n, .fw-ct[data-v="overline"] .fw-ct__n, .fw-ct[data-v="radical"] .fw-ct__n, .fw-ct[data-v="sparks"] .fw-ct__n { color: var(--ct, var(--t1)); }
+
+/* light: the number glows, with a soft orb of its colour behind it */
+.fw-ct[data-v="light"] .fw-ct__n { color: var(--ink); text-shadow: 0 0 6px var(--ct, var(--t1)), 0 0 14px var(--ct, var(--t1)); }
+.fw-ct[data-v="light"] .fw-ct__n::before {
+  content: ""; position: absolute; inset: -9px -8px; z-index: -1;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ct, var(--t1)) 60%, transparent), transparent 70%);
+}
+
+/* pulse: the number breathes and a faint ring of light leaves it */
+.fw-ct[data-v="pulse"] .fw-ct__n { color: var(--ct, var(--t1)); animation: fw-ct-in 0.55s var(--ease) both, fw-ct-pulse 2.2s ease-in-out 0.6s infinite; }
+.fw-ct[data-v="pulse"] .fw-ct__n::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px; z-index: -1;
+  background: radial-gradient(circle, transparent 50%, color-mix(in srgb, var(--ct, var(--t1)) 70%, transparent) 60%, transparent 70%);
+  animation: fw-ct-ring 2.2s ease-out 0.6s infinite;
+}
+@keyframes fw-ct-pulse { 50% { scale: 1.22; } }
+@keyframes fw-ct-ring { from { transform: scale(0.4); opacity: 0.9; } to { transform: scale(1.7); opacity: 0; } }
+
+/* star: a small twinkling star in front of the number */
+.fw-ct[data-v="star"] .fw-ct__n { color: var(--ink); }
+.fw-ct[data-v="star"] .fw-ct__n::before {
+  content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 2px; vertical-align: 2px;
+  background:
+    radial-gradient(circle, #fff 0 14%, var(--ct, var(--t1)) 28%, transparent 62%),
+    linear-gradient(90deg, transparent 8%, var(--ct, var(--t1)) 50%, transparent 92%) center / 100% 8% no-repeat,
+    linear-gradient(0deg, transparent 8%, var(--ct, var(--t1)) 50%, transparent 92%) center / 8% 100% no-repeat;
+  animation: fw-kb-twinkle 2.6s ease-in-out infinite;
+}
+
+/* radical: the word under a root sign and a line; the count is the index of the root */
+.fw-ct[data-v="radical"] { padding-left: 1.1em; margin-top: 8px; }
+.fw-ct__root { position: absolute; left: 0; top: -7px; width: 0.9em; height: calc(100% + 10px); stroke: var(--ct, var(--t1)); stroke-width: 1.2; fill: none; overflow: visible; }
+.fw-ct[data-v="radical"]::before { content: ""; position: absolute; left: 0.88em; right: 0; top: -7px; height: 1px; background: var(--ct, var(--t1)); }
+.fw-ct[data-v="radical"] .fw-ct__n { left: -1px; top: -9px; margin: 0; --ty: 0%; font-size: 0.8125rem; }
+
+/* overline: a hairline runs over the word and ends in the number */
+.fw-ct[data-v="overline"] { margin-top: 8px; }
+.fw-ct[data-v="overline"]::before { content: ""; position: absolute; left: 0; right: 0; top: -8px; height: 1px; background: linear-gradient(90deg, transparent, var(--ct, var(--t1)) 45%); }
+.fw-ct[data-v="overline"] .fw-ct__n { top: -8px; }
+
+/* roll: the new number rolls up into a window the height of a line */
+.fw-ct[data-v="roll"] .fw-ct__n { overflow: hidden; height: 1.15em; animation: none; }
+.fw-ct__d { display: block; animation: fw-ct-roll 0.5s var(--ease) both; }
+@keyframes fw-ct-roll { from { transform: translateY(105%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* orb: the number rests on a soft round bokeh of its colour */
+.fw-ct[data-v="orb"] { margin-right: 1.8em; }
+.fw-ct[data-v="orb"] .fw-ct__n { color: var(--ink); margin-left: 5px; min-width: 14px; text-align: center; }
+.fw-ct[data-v="orb"] .fw-ct__n::before {
+  content: ""; position: absolute; inset: -6px -6px; z-index: -1; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ct, var(--t1)) 70%, transparent) 0, color-mix(in srgb, var(--ct, var(--t1)) 34%, transparent) 54%, color-mix(in srgb, var(--ct, var(--t1)) 85%, transparent) 63%, transparent 71%);
+}
+
+/* sparks: five specks of light leave the number each time it goes up */
+.fw-ct__sp {
+  position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 25%, var(--ct, var(--t1)) 50%, transparent 72%);
+  animation: fw-ct-spark 0.8s var(--ease) both;
+}
+@keyframes fw-ct-spark {
+  from { transform: rotate(var(--a)) translateX(0) scale(0.7); opacity: 1; }
+  to { transform: rotate(var(--a)) translateX(22px) scale(0.2); opacity: 0; }
+}
+
+/* a word you tap to add one (Counts tab) */
+.fw-tx-addcount { display: inline-flex; align-items: flex-end; min-height: 48px; padding: 14px 0 4px; color: var(--ink-2); transition: color 0.3s var(--ease); }
+.fw-tx-addcount:hover { color: var(--ink); }
+
+/* Navigation: Vogue words */
+.fw-tx-nav {
+  min-height: 48px; padding: 0 2px; font-size: 0.9375rem; font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 55%, var(--canvas)); transition: color 0.3s var(--ease);
+}
+.fw-tx-nav:hover { color: color-mix(in srgb, var(--ink) 88%, var(--canvas)); }
+.fw-tx-nav[aria-current="page"] { color: var(--t1); }
+
+/* Index list: number, item, meta, and a hairline that is the progress */
+.fw-tx-row {
+  position: relative; display: grid; grid-template-columns: 2.4rem 1fr auto; align-items: baseline; column-gap: 12px;
+  width: 100%; min-height: 48px; padding: 6px 0 14px; text-align: left;
+  color: color-mix(in srgb, var(--ink) 62%, var(--canvas)); transition: color 0.3s var(--ease);
+}
+.fw-tx-row:hover, .fw-tx-row[data-on="true"] { color: var(--ink); }
+.fw-tx-row__t { font-size: 1.375rem; font-weight: 300; }
+.fw-tx-row__d { margin-left: 14px; font-size: 0.875rem; font-weight: 400; }
+.fw-tx-row__n { font-size: 0.875rem; font-weight: 400; color: var(--t3); }
+.fw-tx-row__line { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--rail); }
+.fw-tx-row__line::after {
+  content: ""; position: absolute; left: 0; top: 0; height: 1px; width: var(--p, 0%);
+  background: color-mix(in srgb, var(--t1) 65%, var(--canvas)); transition: background 0.3s var(--ease);
+}
+.fw-tx-row[data-on="true"] .fw-tx-row__line::after { background: var(--t1); }
+
+/* Option list and category menu */
+.fw-tx-opt, .fw-tx-cat { min-height: 48px; padding: 0; font-size: 1.375rem; font-weight: 300; text-align: left; transition: color 0.3s var(--ease); }
+.fw-tx-opt { color: color-mix(in srgb, var(--ink) 62%, var(--canvas)); }
+.fw-tx-opt:hover { color: var(--ink); }
+.fw-tx-opt[aria-checked="true"] { color: var(--t1); }
+.fw-tx-cat { padding: 10px 0; color: color-mix(in srgb, var(--ink) 70%, var(--canvas)); }
+.fw-tx-cat:hover { color: var(--ink); }
+.fw-tx-cat[aria-current="true"] { color: var(--ct, var(--t1)); }
+
+/* Plain tabs: the selected word changes colour and nothing else */
+.fw-tx-tab {
+  display: inline-flex; align-items: center; gap: 0.7em; min-height: 48px; padding: 0 2px; line-height: 1;
+  color: color-mix(in srgb, var(--ink) 45%, var(--canvas)); transition: color 0.3s var(--ease);
+}
+.fw-tx-tab:hover { color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); }
+.fw-tx-tab[aria-selected="true"] { color: var(--ink); }
+.fw-tx-tab[data-style="option"] { font-size: 1.375rem; font-weight: 300; }
+.fw-tx-tab[data-style="option"][aria-selected="true"] { color: var(--t1); }
+.fw-tx-tab[data-style="vogue"] { font-size: 0.9375rem; font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase; }
+.fw-tx-tab[data-style="kicker"] { font-size: 0.875rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; }
+.fw-tx-tab[data-style="lab"] { font-size: 0.8125rem; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; }
+.fw-tx-tab__n { color: var(--t1); }
+
+/* Filters: words that switch on (their own colour) and off */
+.fw-tx-flt { min-height: 48px; padding: 0; font-size: 1.125rem; font-weight: 300; color: color-mix(in srgb, var(--ink) 50%, var(--canvas)); transition: color 0.3s var(--ease); }
+.fw-tx-flt:hover { color: color-mix(in srgb, var(--ink) 82%, var(--canvas)); }
+.fw-tx-flt[data-on="true"] { color: var(--ct, var(--t1)); }
+
+/* A count of 0 draws nothing at all: not the number, nor the root sign or the line that belong to it. */
+.fw-ct[data-zero="true"]::before { display: none; }
+.fw-ct[data-zero="true"] .fw-ct__root { display: none; }
+.fw-ct[data-v="radical"][data-zero="true"], .fw-ct[data-v="overline"][data-zero="true"] { padding-left: 0; margin-top: 0; }

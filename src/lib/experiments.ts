@@ -19,10 +19,10 @@ export interface Category {
 /** The top layer, in the order the home page shows them. */
 export const CATEGORIES: Category[] = [
   { id: 'comments', name: 'Comments', blurb: 'Letter-coded conversation: the room to play in, every older comment section, and how a posted comment leaves.', colour: '#8fd3b6' },
-  { id: 'type', name: 'Type', blurb: 'The words themselves: hero titles behind a page, and spatial type that flies through the screen.', colour: '#b8c0d4' },
+  { id: 'type', name: 'Type', blurb: 'The words themselves: the type roles, menus, notification counts and tabs, hero titles behind a page, and spatial type that flies through the screen.', colour: '#b8c0d4' },
   { id: 'motion', name: 'Motion', blurb: 'How things arrive, move and answer a touch: the motion levels, arrivals, transitions, trails.', colour: '#c792ea' },
   { id: 'light', name: 'Light', blurb: 'What the page is lit by: backgrounds, glass, the fluid smoke shaders, and the lines and rays of light.', colour: '#7fd1e8' },
-  { id: 'controls', name: 'Controls', blurb: 'What you touch to choose: cards, tabs and drag gestures.', colour: '#e9c46a' },
+  { id: 'controls', name: 'Controls', blurb: 'What you touch to choose: kinetic buttons, cards, tabs and drag gestures.', colour: '#e9c46a' },
   { id: 'data', name: 'Data', blurb: 'Charts and the dots, bars and lines they are made of. Airbrush gradient is the default.', colour: '#f08fb0' },
   { id: 'decisions', name: 'Decisions', blurb: 'Where the choices get made: the Lab Master and the landing page.', colour: '#9fb8ff' },
 ];
@@ -165,6 +165,20 @@ export const EXPERIMENTS: Experiment[] = [
     blurb: 'Sixty-six ways to draw a line of light, and a Veils tab with fifty-six big soft areas of colour: airbrush, neon, lasers, dissipating light, glass, highlighters, stars you can press.',
     tag: 'Light · Rays',
     category: 'light',
+  },
+  {
+    href: '/typography',
+    title: 'Typography',
+    blurb: 'The type roles on one page: hero title, titles, subtitle, body, menus and lists, notification counts as small raised numbers, and plain text tabs and filters.',
+    tag: 'Type · Roles',
+    category: 'type',
+  },
+  {
+    href: '/buttons',
+    title: 'Buttons',
+    blurb: 'Fifty borderless kinetic buttons: press a word and it pulses, jumps, scatters into stars, is sliced by light or zooms into nothing.',
+    tag: 'Kinetic · Light',
+    category: 'controls',
   },
   {
     href: '/master',
