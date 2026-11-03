@@ -181,6 +181,13 @@ export const EXPERIMENTS: Experiment[] = [
     category: 'controls',
   },
   {
+    href: '/time',
+    title: 'Time',
+    blurb: 'Sixteen ways to show records and periods over time: tree rings, spiral, warming stripes, streamgraph, ridgeline, rose, sunburst, arcs, sankey, lanes and a constellation.',
+    tag: 'Data · Periods',
+    category: 'data',
+  },
+  {
     href: '/master',
     title: 'Lab Master',
     blurb: 'Where the finished designs of the whole FrissonWorks empire get gathered: the decision matrix of motion styles and components.',

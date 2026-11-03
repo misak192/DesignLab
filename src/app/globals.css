@@ -1003,3 +1003,11 @@ body.light-mode { --dot-glass: 120 132 170; }
 .fw-ct[data-zero="true"]::before { display: none; }
 .fw-ct[data-zero="true"] .fw-ct__root { display: none; }
 .fw-ct[data-v="radical"][data-zero="true"], .fw-ct[data-v="overline"][data-zero="true"] { padding-left: 0; margin-top: 0; }
+
+/* ── /time: text inside the drawings (halo as a canvas stroke behind the fill) and the entries ── */
+.fw-tm-t { font-family: inherit; font-weight: 300; fill: var(--ink-2); paint-order: stroke; stroke: var(--canvas); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.fw-tm-t[data-hi="true"] { fill: var(--ink); }
+.fw-tm-box { transform-box: fill-box; transform-origin: center; }
+@keyframes fw-tm-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fw-tm-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes fw-tm-pop { from { opacity: 0; transform: scale(0.35); } to { opacity: 1; transform: none; } }
