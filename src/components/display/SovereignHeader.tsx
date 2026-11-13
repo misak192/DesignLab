@@ -2,8 +2,9 @@
  * File: src/components/display/SovereignHeader.tsx
  * Description: The Sovereign header from LoreLyst, for the Design Lab: a profile glyph top right that opens a panel
  * of plain settings rows (label small on the left, value large on the right, nothing behind either). Each row
- * cycles its setting when tapped: LIGHT, SKIN, MOTION, TEXT, TYPE, BG (intensity + background), SHADOW. Then links
- * to Home and to every category of the lab. No accounts here, so no sign-in. The settings are saved in this browser only.
+ * cycles its setting when tapped: LIGHT, COLOUR, MOTION (the amount), TEXT (size), SHADOW. Then a link to ALL SETTINGS (the
+ * /settings page: LOOK, TEXT, MOTION) and links to Home and to every category of the lab. No accounts here, so no sign-in. The
+ * settings are saved in this browser only.
  */
 "use client";
 import { useEffect, useRef, useState } from 'react';
@@ -11,9 +12,8 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDisplay, useMotion } from './DisplayProvider';
 import { transitionFor } from '@/lib/motion/presets';
-import { BG_ENGINES, BG_INTENSITIES, BG_LABEL } from '@/lib/display/background/engines';
 import { CATEGORIES } from '@/lib/experiments';
-import { MOTION_LEVELS, SKINS, TEXT_SCALES, TYPE_STYLES, nextOf } from '@/lib/display/settings';
+import { MOTION_LABEL, MOTION_LEVELS, SKINS, TEXT_SCALES, nextOf } from '@/lib/display/settings';
 
 /** Home, then the categories: each opens a page listing its experiments. */
 const PAGES = [{ href: '/', label: 'Home' }, ...CATEGORIES.map((c) => ({ href: `/category/${c.id}`, label: c.name }))];
@@ -58,8 +58,6 @@ export default function SovereignHeader() {
     closeTimer.current = setTimeout(() => setOpen(false), 300);
   };
 
-  const typeLabel = settings.type.toUpperCase();
-
   return (
     <nav aria-label="Settings and pages" className="fw-sov">
       <div className="fw-sov__wrap" onMouseEnter={enter} onMouseLeave={leave}>
@@ -84,36 +82,17 @@ export default function SovereignHeader() {
               transition={preset.scale ? { type: 'spring', duration: 0.4, bounce: preset.spring ? 0.4 : 0.2 } : transitionFor(preset)}
               className="fw-sov__panel"
             >
+              {/* The quick settings: what people change in the moment, and the accessibility opt-outs (motion, text size, shadow).
+                  Everything else is on /settings, in three groups: LOOK, TEXT, MOTION. */}
               <Row label="LIGHT" value={settings.light ? 'LIGHT' : 'DARK'} onClick={() => set({ light: !settings.light })} />
-              <Row label="SKIN" value={settings.skin.toUpperCase()} onClick={() => set({ skin: nextOf(SKINS, settings.skin) })} />
-              <Row label="MOTION" value={settings.motion.toUpperCase()} onClick={() => set({ motion: nextOf(MOTION_LEVELS, settings.motion) })} />
+              <Row label="COLOUR" value={settings.skin.toUpperCase()} onClick={() => set({ skin: nextOf(SKINS, settings.skin) })} />
+              <Row label="MOTION" value={MOTION_LABEL[settings.motion]} onClick={() => set({ motion: nextOf(MOTION_LEVELS, settings.motion) })} />
               <Row label="TEXT" value={settings.text.toUpperCase()} onClick={() => set({ text: nextOf(TEXT_SCALES, settings.text) })} />
-              <Row label="TYPE" value={typeLabel} onClick={() => set({ type: nextOf(TYPE_STYLES, settings.type) })} />
-
-              {/* BG reads "CORE MARBLE": the first word is the intensity, the second the background; two tap targets. */}
-              <div className="fw-sov__row fw-sov__row--dual">
-                <span className="fw-sov__label">BG</span>
-                <span className="fw-sov__duo">
-                  {settings.bgEngine !== 'off' && (
-                    <button
-                      type="button"
-                      className="fw-sov__value fw-sov__part"
-                      onClick={() => set({ bgIntensity: nextOf(BG_INTENSITIES, settings.bgIntensity) })}
-                    >
-                      {settings.bgIntensity.toUpperCase()}
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="fw-sov__value fw-sov__part"
-                    onClick={() => set({ bgEngine: nextOf(BG_ENGINES.filter((e) => e !== 'scenery'), settings.bgEngine) })}
-                  >
-                    {BG_LABEL[settings.bgEngine]}
-                  </button>
-                </span>
-              </div>
-
               <Row label="SHADOW" value={settings.shadow ? 'ON' : 'OFF'} onClick={() => set({ shadow: !settings.shadow })} />
+
+              <Link href="/settings" onClick={() => setOpen(false)} className="fw-sov__all">
+                ALL SETTINGS →
+              </Link>
 
               <div className="fw-sov__apps">
                 {PAGES.map((page) => (

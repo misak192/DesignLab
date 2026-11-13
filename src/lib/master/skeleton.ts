@@ -11,14 +11,13 @@ export interface MasterMotion {
   blurb: string;
 }
 
-/** The tab switcher at the top. Michal's list so far: the four current levels, with Colour swapped for Kinetic, plus Slice and Stars. */
+/** The style switcher at the top: the five motion styles (ids are the `style` setting's values). Off, Normal and Full are the amount. */
 export const MASTER_MOTIONS: MasterMotion[] = [
-  { id: 'off', name: 'Off', blurb: 'Nothing moves. Every change is instant.' },
-  { id: 'normal', name: 'Normal', blurb: 'Calm. One long-settling ease and a little travel.' },
-  { id: 'kinetic', name: 'Kinetic', blurb: 'Type and controls move with energy; letters and numbers are alive.' },
-  { id: 'ott', name: 'OTT', blurb: 'Over the top. Springs, deep parallax, big tilt.' },
+  { id: 'plain', name: 'Plain', blurb: 'Calm. A hairline and a soft focus; nothing shows off.' },
+  { id: 'kinetic', name: 'Kinetic', blurb: 'Letters and numbers are alive: the letter wave.' },
   { id: 'slice', name: 'Slice', blurb: 'Every title and animation is cut into slices.' },
-  { id: 'stars', name: 'Stars', blurb: 'A button dissipates into stars behind it.' },
+  { id: 'stars', name: 'Stars', blurb: 'Things break into stardust, and a button dissipates into stars behind it.' },
+  { id: 'zoom', name: 'Zoom', blurb: 'Text flies through the screen, toward you and past you.' },
 ];
 
 export interface MasterSection {

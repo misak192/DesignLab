@@ -280,6 +280,12 @@ button {
   font-size: 0.875rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--ink);
 }
 .fw-sov__link:hover { color: var(--t1); }
+/* The link from the quick settings to the full /settings page. */
+.fw-sov__all {
+  display: inline-flex; align-items: center; min-height: 48px; margin-top: 8px;
+  font-size: 0.875rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--t1);
+}
+.fw-sov__all:hover { color: var(--ink); }
 
 /* ---- motion helpers (MOTION levels, see src/lib/motion/presets.ts) ----------------------------------------------- */
 /* OTT: a chromatic fringe that settles into the normal halo. */

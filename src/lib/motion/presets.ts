@@ -5,9 +5,10 @@
  *
  *   off     nothing moves: every duration is 0, no parallax, no hover travel.
  *   normal  calm and fast: one long-settling ease, a little travel, a hint of parallax.
- *   colour  normal movement, plus colour doing the work: theme-coloured glows follow the pointer, gradients drift,
- *           colour changes (votes!) fade instead of snapping.
- *   ott     over the top: springs with overshoot, big travel, deep parallax and tilt, chromatic split on text.
+ *   ott     FULL, over the top: springs with overshoot, big travel, deep parallax and tilt, chromatic split on text.
+ *
+ * These are the AMOUNT only (the MOTION setting). What kind of motion it is (plain, kinetic, slice, stars, zoom) is the separate
+ * `style` setting; the old COLOUR level was removed because colour is not an amount.
  *
  * Pure TypeScript, no React or DOM, so it can move into a shared package with the letter logic.
  */
@@ -47,10 +48,6 @@ export const MOTION_PRESETS: Record<MotionLevel, MotionPreset> = {
     level: 'normal', scale: 1, ease: [0.22, 1, 0.36, 1], spring: null,
     stagger: 0.06, rise: 14, blur: 6, parallax: 1, tilt: 6, colour: false, glitch: false,
   },
-  colour: {
-    level: 'colour', scale: 1, ease: [0.22, 1, 0.36, 1], spring: null,
-    stagger: 0.07, rise: 14, blur: 8, parallax: 1, tilt: 7, colour: true, glitch: false,
-  },
   ott: {
     level: 'ott', scale: 1.15, ease: [0.16, 1, 0.3, 1], spring: { stiffness: 260, damping: 14, mass: 0.9 },
     stagger: 0.09, rise: 46, blur: 14, parallax: 2.6, tilt: 16, colour: true, glitch: true,
@@ -61,8 +58,7 @@ export const MOTION_PRESETS: Record<MotionLevel, MotionPreset> = {
 export const MOTION_BLURB: Record<MotionLevel, string> = {
   off: 'Nothing moves. Every change is instant.',
   normal: 'Calm. One long-settling ease, a little travel, a hint of depth.',
-  colour: 'Normal movement, with colour doing the work: glows follow you, changes fade through colour.',
-  ott: 'Over the top. Springs that overshoot, deep parallax, big tilt, a chromatic fringe on type.',
+  ott: 'Full. Springs that overshoot, deep parallax, big tilt, a chromatic fringe on type.',
 };
 
 /** A framer-motion transition for this level: instant when off, a spring for ott, the long ease otherwise. */

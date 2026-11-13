@@ -1,6 +1,6 @@
 /**
  * File: src/components/motion/MotionLab.tsx
- * Description: The /motion page: where MOTION is designed. The four levels (OFF, NORMAL, COLOUR, OTT) are numbers in
+ * Description: The /motion page: where MOTION is designed. The three amounts (OFF, NORMAL, FULL) are numbers in
  * src/lib/motion/presets.ts; every demo here reads them, so choosing a level changes all of it the same way, and
  * the same numbers drive the comments and the cards. Kinetic type and parallax first, as they matter most.
  */
@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useDisplay, useMotion } from '@/components/display/DisplayProvider';
-import { MOTION_LEVELS } from '@/lib/display/settings';
+import { MOTION_LABEL, MOTION_LEVELS } from '@/lib/display/settings';
 import { MOTION_BLURB, MOTION_PRESETS } from '@/lib/motion/presets';
 import {
   ColourDrift,
@@ -50,7 +50,7 @@ export default function MotionLab() {
         </Link>
         <h1 className="fw-vogue text-[clamp(30px,7vw,64px)] leading-[1.1] text-ink">Motion</h1>
         <p className="fw-big max-w-[28ch] text-[29px] font-light leading-[1.25] text-ink">
-          One switch, four feelings, the same numbers everywhere.
+          One switch, three amounts, the same numbers everywhere.
         </p>
       </header>
 
@@ -72,7 +72,7 @@ export default function MotionLab() {
                   className="fw-big w-fit border-b text-[22px] font-light uppercase tracking-[0.08em] transition-colors"
                   style={{ color: selected ? 'var(--t1)' : 'var(--ink)', borderColor: selected ? 'var(--t1)' : 'transparent' }}
                 >
-                  {level}
+                  {MOTION_LABEL[level].toLowerCase()}
                 </span>
                 <span className="max-w-[40ch] text-[0.875rem] font-normal text-ink-2">{MOTION_BLURB[level]}</span>
               </button>

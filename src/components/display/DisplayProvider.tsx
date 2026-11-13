@@ -41,6 +41,7 @@ export function DisplayEffects() {
     body.classList.add(`theme-${settings.skin}`);
     body.classList.toggle('light-mode', settings.light);
     body.setAttribute('data-kinematics', settings.motion);
+    body.setAttribute('data-motion-style', settings.style);
     body.setAttribute('data-shadow', settings.shadow ? 'on' : 'off');
     html.setAttribute('data-text-scale', settings.text);
     html.setAttribute('data-type-style', settings.type);

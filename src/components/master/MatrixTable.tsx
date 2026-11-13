@@ -48,7 +48,7 @@ export default function MatrixTable() {
       </p>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[820px] border-collapse text-left">
+        <table className="w-full min-w-[980px] border-collapse text-left">
           <thead>
             <tr>
               <th scope="col" className="w-[150px] pb-4 pr-4">

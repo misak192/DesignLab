@@ -11,9 +11,21 @@ export const SKINS = [
 ] as const;
 export type Skin = (typeof SKINS)[number];
 
-/** Same four levels as LoreLyst's MOTION: OFF means nothing moves. */
-export const MOTION_LEVELS = ['off', 'normal', 'colour', 'ott'] as const;
+/**
+ * MOTION is the AMOUNT: how much any style moves. OFF means nothing moves, FULL (id 'ott') is over the top. The old COLOUR level is
+ * gone: colour is not an amount, and its drift belongs to a style or a look. A saved 'colour' reads as 'normal'.
+ */
+export const MOTION_LEVELS = ['off', 'normal', 'ott'] as const;
 export type MotionLevel = (typeof MOTION_LEVELS)[number];
+export const MOTION_LABEL: Record<MotionLevel, string> = { off: 'OFF', normal: 'NORMAL', ott: 'FULL' };
+
+/**
+ * The motion STYLE: the character of how things behave and are drawn, on top of the amount. Each style has its own design for every
+ * component (the matrix on /master). Today the setting is saved and exposed as `data-motion-style` on <body>; the designs are
+ * attached cell by cell as they are chosen.
+ */
+export const MOTION_STYLES = ['plain', 'kinetic', 'slice', 'stars', 'zoom'] as const;
+export type MotionStyle = (typeof MOTION_STYLES)[number];
 
 export const TEXT_SCALES = ['small', 'normal', 'large'] as const;
 export type TextScale = (typeof TEXT_SCALES)[number];
@@ -40,6 +52,32 @@ export const HERO_STYLES = [
 ] as const;
 export type HeroStyle = (typeof HERO_STYLES)[number];
 
+/** The TITLES style setting: one of the designs, or AUTO = the one the motion style suggests (STYLE_HERO). */
+export const HERO_CHOICES = ['auto', ...HERO_STYLES] as const;
+export type HeroSetting = (typeof HERO_CHOICES)[number];
+
+/** The hero each motion style suggests (the Hero title row of the matrix on /master). */
+export const STYLE_HERO: Record<MotionStyle, HeroStyle> = {
+  plain: 'mist',
+  kinetic: 'veil',
+  slice: 'slice',
+  stars: 'airbrush',
+  zoom: 'depth',
+};
+
+/** The hero title that is actually drawn: the chosen design, or the style's suggestion for AUTO. */
+export function resolveHero(s: { hero: HeroSetting; style: MotionStyle }): HeroStyle {
+  return s.hero === 'auto' ? STYLE_HERO[s.style] : s.hero;
+}
+
+/** How big the hero titles are: HUGE is today's size, OFF draws no hero (a plain Vogue title instead). */
+export const HERO_SIZES = ['huge', 'large', 'small', 'off'] as const;
+export type HeroSize = (typeof HERO_SIZES)[number];
+export const HERO_SCALE: Record<HeroSize, number> = { huge: 1, large: 0.7, small: 0.45, off: 0 };
+
+/** A hero's font size in px for a design size (e.g. 150), 0 when titles are off. */
+export const heroPx = (size: HeroSize, base: number) => Math.round(base * HERO_SCALE[size]);
+
 /** How a comment box lights up while you write in it (chosen on /backgrounds). */
 export const GLOW_STYLES = ['none', 'line', 'spotlight', 'mesh', 'gradient', 'aurora', 'stars'] as const;
 export type GlowStyle = (typeof GLOW_STYLES)[number];
@@ -47,7 +85,10 @@ export type GlowStyle = (typeof GLOW_STYLES)[number];
 export interface DisplaySettings {
   light: boolean;
   skin: Skin;
+  /** The amount (OFF, NORMAL, FULL). */
   motion: MotionLevel;
+  /** The style (plain, kinetic, slice, stars, zoom). */
+  style: MotionStyle;
   text: TextScale;
   type: TypeStyle;
   bgEngine: BgEngine;
@@ -56,7 +97,8 @@ export interface DisplaySettings {
   shadow: boolean;
   card: CardStyle;
   glow: GlowStyle;
-  hero: HeroStyle;
+  hero: HeroSetting;
+  heroSize: HeroSize;
   landing: LandingStyle;
   welcome: WelcomeStyle;
 }
@@ -65,6 +107,7 @@ export const DEFAULT_SETTINGS: DisplaySettings = {
   light: false,
   skin: 'ocean',
   motion: 'normal',
+  style: 'plain',
   text: 'normal',
   type: 'jost',
   bgEngine: 'off',
@@ -72,7 +115,8 @@ export const DEFAULT_SETTINGS: DisplaySettings = {
   shadow: true,
   card: 'line',
   glow: 'stars',
-  hero: 'mist',
+  hero: 'auto',
+  heroSize: 'huge',
   landing: 'index',
   welcome: 'full',
 };
@@ -88,6 +132,7 @@ export function sanitizeSettings(raw: unknown): DisplaySettings {
     light: typeof r.light === 'boolean' ? r.light : d.light,
     skin: includes(SKINS, r.skin) ? r.skin : d.skin,
     motion: includes(MOTION_LEVELS, r.motion) ? r.motion : d.motion,
+    style: includes(MOTION_STYLES, r.style) ? r.style : d.style,
     text: includes(TEXT_SCALES, r.text) ? r.text : d.text,
     type: includes(TYPE_STYLES, r.type) ? r.type : d.type,
     bgEngine: typeof r.bgEngine === 'string' ? (r.bgEngine as BgEngine) : d.bgEngine,
@@ -95,7 +140,8 @@ export function sanitizeSettings(raw: unknown): DisplaySettings {
     shadow: typeof r.shadow === 'boolean' ? r.shadow : d.shadow,
     card: includes(CARD_STYLES, r.card) ? r.card : d.card,
     glow: includes(GLOW_STYLES, r.glow) ? r.glow : d.glow,
-    hero: includes(HERO_STYLES, r.hero) ? r.hero : d.hero,
+    hero: includes(HERO_CHOICES, r.hero) ? r.hero : d.hero,
+    heroSize: includes(HERO_SIZES, r.heroSize) ? r.heroSize : d.heroSize,
     landing: includes(LANDING_STYLES, r.landing) ? r.landing : d.landing,
     welcome: includes(WELCOME_STYLES, r.welcome) ? r.welcome : d.welcome,
   };

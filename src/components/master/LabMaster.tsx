@@ -1,14 +1,15 @@
 /**
  * File: src/components/master/LabMaster.tsx
- * Description: The /master page, a skeleton. Top: every Sovereign setting as a row of buttons (none wired). Then the motion
- * tab switcher, which only remembers which tab is lit and changes nothing else yet. Then one section per component, all
- * placeholders. The aim is to see the whole structure first; features are attached to it one by one afterwards.
+ * Description: The /master page. Top: the decision matrix (styles across, rows down), the place where a lab design is fixed for each
+ * style. Then the Settings pointer (the settings now live on /settings), the style switcher (it sets the real Style setting, but
+ * nothing reads it until the designs are attached), and one section per component, all placeholders. Features are attached to the
+ * placeholders one by one as the matrix cells are chosen.
  */
 "use client";
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { BG_ENGINES, BG_INTENSITIES, BG_LABEL } from '@/lib/display/background/engines';
-import { DEFAULT_SETTINGS, SKINS, TEXT_SCALES, TYPE_STYLES } from '@/lib/display/settings';
+import { useDisplay } from '@/components/display/DisplayProvider';
+import { MOTION_STYLES } from '@/lib/display/settings';
 import { MASTER_MOTIONS, MASTER_SECTIONS } from '@/lib/master/skeleton';
 import MatrixTable from './MatrixTable';
 import {
@@ -22,24 +23,6 @@ import {
   VotingSample,
 } from './Samples';
 
-interface Group {
-  label: string;
-  options: string[];
-  /** Lit by default, as in the app's defaults. Display only. */
-  current: string;
-}
-
-const D = DEFAULT_SETTINGS;
-const GROUPS: Group[] = [
-  { label: 'Light', options: ['Dark', 'Light'], current: 'Dark' },
-  { label: 'Colour', options: SKINS.map((s) => s.toUpperCase()), current: D.skin.toUpperCase() },
-  { label: 'Text', options: TEXT_SCALES.map((s) => s.toUpperCase()), current: D.text.toUpperCase() },
-  { label: 'Type', options: TYPE_STYLES.map((s) => s.toUpperCase()), current: D.type.toUpperCase() },
-  { label: 'Background', options: BG_ENGINES.map((e) => BG_LABEL[e]), current: BG_LABEL[D.bgEngine] },
-  { label: 'Intensity', options: BG_INTENSITIES.map((i) => i.toUpperCase()), current: D.bgIntensity.toUpperCase() },
-  { label: 'Shadow', options: ['On', 'Off'], current: 'On' },
-];
-
 const SAMPLES: Record<string, ReactNode> = {
   titles: <TitlesSample />,
   buttons: <ButtonsSample />,
@@ -51,11 +34,17 @@ const SAMPLES: Record<string, ReactNode> = {
   tabs: <TabsSample />,
 };
 
+const GROUP_LINKS = [
+  { tab: 'look', name: 'Look', what: 'Light, colour, background, titles' },
+  { tab: 'text', name: 'Text', what: 'Size, type, shadow' },
+  { tab: 'motion', name: 'Motion', what: 'Style and amount' },
+];
+
 const pad = (n: number) => String(n).padStart(2, '0');
 
 export default function LabMaster() {
-  const [motion, setMotion] = useState(MASTER_MOTIONS[1].id);
-  const active = MASTER_MOTIONS.find((m) => m.id === motion) ?? MASTER_MOTIONS[0];
+  const { settings, set } = useDisplay();
+  const active = MASTER_MOTIONS.find((m) => m.id === settings.style) ?? MASTER_MOTIONS[0];
 
   return (
     <main className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col px-7 pb-40 pt-10 sm:pt-14">
@@ -68,59 +57,58 @@ export default function LabMaster() {
           The finished designs for the whole FrissonWorks empire, in one place.
         </p>
         <p className="max-w-[62ch] text-[1.0625rem] font-light leading-[1.5] text-ink-2">
-          Skeleton. The buttons below do nothing yet: each setting, motion and component is a place to attach a design from
-          the lab once it is decided.
+          The matrix below is the document: for each style, which lab design every row uses. The placeholders further down get their
+          designs attached as the cells are chosen.
         </p>
       </header>
 
-      {/* The decision matrix: motions across, components down. Filled in as designs are chosen. */}
+      {/* The decision matrix: styles across, rows down. Filled in as designs are chosen. */}
       <MatrixTable />
 
-      {/* Settings: every Sovereign setting, as options (display only) */}
+      {/* Settings now live on their own page, in three groups. */}
       <section aria-labelledby="m-settings" className="flex flex-col gap-4 border-t border-[var(--rail)] py-10">
         <h2 id="m-settings" className="fw-kicker text-ink">
           Settings
         </h2>
-        <div className="flex flex-col">
-          {GROUPS.map((g) => (
-            <div key={g.label} className="grid items-start gap-x-6 sm:grid-cols-[120px_1fr]">
-              <span className="fw-kicker flex min-h-[48px] items-center text-ink-2">{g.label}</span>
-              <div role="radiogroup" aria-label={g.label} className="flex flex-wrap gap-x-1">
-                {g.options.map((o) => (
-                  <button key={o} type="button" role="radio" aria-checked={o === g.current} className="fw-opt">
-                    {o}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <p className="max-w-[62ch] text-[0.9375rem] font-light text-ink-2">
+          Every setting has its own page now, in three groups, with a live preview. The header keeps only the quick ones.
+        </p>
+        <ul className="flex flex-col">
+          {GROUP_LINKS.map((g) => (
+            <li key={g.tab} className="grid items-center gap-x-6 sm:grid-cols-[120px_1fr]">
+              <Link href={g.tab === 'look' ? '/settings' : `/settings?tab=${g.tab}`} className="fw-sk-btn w-fit" data-kind="primary">
+                {g.name} →
+              </Link>
+              <span className="text-[0.9375rem] font-light text-ink-2">{g.what}</span>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      {/* Motion: the tab switcher. It lights a tab and nothing else yet. */}
+      {/* The style switcher: sets the real Style setting. Nothing reads it yet, so nothing else changes. */}
       <section aria-labelledby="m-motion" className="flex flex-col gap-4 border-t border-[var(--rail)] py-10">
         <h2 id="m-motion" className="fw-kicker text-ink">
-          Motion
+          Style
         </h2>
-        <div role="tablist" aria-label="Motion" className="flex flex-wrap gap-x-6">
+        <div role="tablist" aria-label="Motion style" className="flex flex-wrap gap-x-6">
           {MASTER_MOTIONS.map((m) => (
             <button
               key={m.id}
               type="button"
               role="tab"
-              aria-selected={m.id === motion}
+              aria-selected={m.id === settings.style}
               className="fw-ts-tab"
-              onClick={() => setMotion(m.id)}
+              onClick={() => set({ style: m.id as (typeof MOTION_STYLES)[number] })}
             >
               <span className="relative whitespace-nowrap">
                 {m.name}
-                {m.id === motion && <span aria-hidden className="absolute inset-x-0 -bottom-1 block h-px bg-t1" />}
+                {m.id === settings.style && <span aria-hidden className="absolute inset-x-0 -bottom-1 block h-px bg-t1" />}
               </span>
             </button>
           ))}
         </div>
         <p className="max-w-[56ch] text-[0.9375rem] font-light text-ink-2">
-          {active.blurb} <span className="text-ink-3">Not wired: everything below looks the same whichever tab is lit.</span>
+          {active.blurb} <span className="text-ink-3">Saved as the Style setting. Only the AUTO hero title follows it so far; the other designs are attached as the matrix is chosen.</span>
         </p>
       </section>
 

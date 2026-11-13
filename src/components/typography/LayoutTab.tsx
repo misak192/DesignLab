@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useDisplay } from '@/components/display/DisplayProvider';
 import HeroTitle from '@/components/hero/HeroTitle';
 import { HERO_WORDS } from '@/lib/hero/heroes';
+import { resolveHero } from '@/lib/display/settings';
 import { Options } from '@/components/chartstudy/dots/DotStudy';
 
 const WORDS = HERO_WORDS.map((w) => ({ id: w.word, label: w.word }));
@@ -39,7 +40,7 @@ export default function LayoutTab() {
 
       {/* Hero: the saved hero design, as big as a page title gets. */}
       <div className="pb-6 pt-4">
-        <HeroTitle word={word} variant={settings.hero} size={150} crop={false} overlap={0.1} />
+        <HeroTitle word={word} variant={resolveHero(settings)} size={150} crop={false} overlap={0.1} />
         <p className="fw-tabular pt-3 text-[0.8125rem] font-light text-ink-3">
           Hero title · up to 160 (ceiling 190) · 300 · tracking −1.5 · drawn in the design saved on{' '}
           <Link href="/hero-titles" className="underline decoration-[var(--rail)] underline-offset-4 hover:text-ink">

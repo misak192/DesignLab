@@ -50,7 +50,7 @@ export const EXPERIMENTS: Experiment[] = [
   {
     href: '/motion',
     title: 'Motion',
-    blurb: 'Kinetic type, parallax and feedback at OFF, NORMAL, COLOUR and OTT. The numbers every page reads.',
+    blurb: 'Kinetic type, parallax and feedback at OFF, NORMAL and FULL. The numbers every page reads.',
     tag: 'Foundation',
     category: 'motion',
   },

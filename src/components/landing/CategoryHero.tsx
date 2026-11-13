@@ -6,7 +6,7 @@
 "use client";
 import Link from 'next/link';
 import { useDisplay } from '@/components/display/DisplayProvider';
-import HeroTitle from '@/components/hero/HeroTitle';
+import SizedHero from '@/components/hero/SizedHero';
 import { projectTint } from '@/lib/hero/heroes';
 import type { Category } from '@/lib/experiments';
 import { countLabel } from '@/lib/landing/search';
@@ -14,7 +14,7 @@ import { countLabel } from '@/lib/landing/search';
 export default function CategoryHero({ category, index, count }: { category: Category; index: number; count: number }) {
   const { settings } = useDisplay();
   return (
-    <HeroTitle word={category.name} variant={settings.hero} tint={projectTint(category.colour, settings.light)} size={150} crop={false} overlap={0.1} className="pb-16 sm:pb-20">
+    <SizedHero word={category.name} tint={projectTint(category.colour, settings.light)} base={150} overlap={0.1} className="pb-16 sm:pb-20">
       <header className="flex flex-col gap-8">
         <Link href="/" className="fw-kicker w-fit text-ink-2 transition-colors hover:text-ink">
           ← Design Lab
@@ -27,6 +27,6 @@ export default function CategoryHero({ category, index, count }: { category: Cat
         </div>
         <p className="fw-big max-w-[30ch] text-[29px] font-light leading-[1.25] text-ink">{category.blurb}</p>
       </header>
-    </HeroTitle>
+    </SizedHero>
   );
 }

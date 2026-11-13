@@ -11,9 +11,9 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useDisplay, useMotion } from '@/components/display/DisplayProvider';
 import { CARD_COMPONENTS } from '@/components/cards/variants';
-import HeroTitle from '@/components/hero/HeroTitle';
+import SizedHero from '@/components/hero/SizedHero';
 import { projectTint } from '@/lib/hero/heroes';
-import type { LandingStyle } from '@/lib/display/settings';
+import { resolveHero, type LandingStyle } from '@/lib/display/settings';
 import { asExperiment, countLabel } from '@/lib/landing/search';
 import type { CategoryResult } from '@/lib/landing/search';
 import { transitionFor } from '@/lib/motion/presets';
@@ -74,7 +74,7 @@ function IndexRow({ r, preview, order }: { r: CategoryResult; preview?: boolean;
   return (
     <Rise order={order}>
       <Entry r={r} preview={preview} className="group block min-h-[48px] outline-offset-8">
-        <HeroTitle word={r.category.name} variant={settings.hero} tint={projectTint(r.category.colour, settings.light)} size={88} crop={false} overlap={0.38} className="pb-10">
+        <SizedHero word={r.category.name} tint={projectTint(r.category.colour, settings.light)} base={88} overlap={0.38} className="pb-10">
           <div className="flex flex-col gap-3 pt-2">
             <div className="flex items-baseline gap-3">
               <span className="fw-kicker fw-tabular text-t1">{pad(r.index)}</span>
@@ -85,7 +85,7 @@ function IndexRow({ r, preview, order }: { r: CategoryResult; preview?: boolean;
             <Hits r={r} />
             <Rail />
           </div>
-        </HeroTitle>
+        </SizedHero>
       </Entry>
     </Rise>
   );
@@ -143,7 +143,7 @@ export default function LandingCategories({ layout, results, preview, empty }: {
 
   const Row = layout === 'index' ? IndexRow : layout === 'poster' ? PosterRow : CompactRow;
   return (
-    <ul key={`${layout}-${settings.hero}`} className={layout === 'index' ? 'flex flex-col gap-4' : 'flex flex-col border-b border-[var(--rail)]'}>
+    <ul key={`${layout}-${resolveHero(settings)}-${settings.heroSize}`} className={layout === 'index' ? 'flex flex-col gap-4' : 'flex flex-col border-b border-[var(--rail)]'}>
       {results.map((r, n) => (
         <Row key={r.category.id} r={r} preview={preview} order={n} />
       ))}
