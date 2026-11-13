@@ -43,8 +43,8 @@ export const HERO_INFO: Record<HeroStyle, HeroInfo> = {
   smoke: {
     name: 'Smoke',
     tags: ['Etheric', 'Kinetic'],
-    note: 'Soft letters that ripple slowly, as if drawn in smoke. Never quite still, never sharp.',
-    motion: 'OFF: a frozen wisp. NORMAL: slow ripple. OTT: it churns.',
+    note: 'Clear, calm letters, strongest at the baseline, with soft wisps of the word rising off them and fading, like smoke.',
+    motion: 'OFF: the wisps hang still. NORMAL: a slow rise. FULL: a quick one.',
   },
   veil: {
     name: 'Veil',
@@ -67,7 +67,7 @@ export const HERO_INFO: Record<HeroStyle, HeroInfo> = {
   mirror: {
     name: 'Mirror',
     tags: ['Premium'],
-    note: 'The word stands on a floor, a single hairline. Its reflection fades away underneath.',
+    note: 'The word, and its reflection fading away directly underneath it. Nothing in between: no line, no floor.',
     motion: 'Still: the reflection is the design. Needs a little more room below.',
   },
   aurora: {

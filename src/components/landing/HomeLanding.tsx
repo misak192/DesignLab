@@ -25,12 +25,9 @@ export default function HomeLanding() {
 
       <section id="categories" aria-labelledby="categories-title" className="flex scroll-mt-8 flex-col gap-8">
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-2">
-          <div className="flex items-baseline gap-3">
-            <span className="fw-kicker fw-tabular text-t1">01</span>
-            <h2 id="categories-title" className="fw-kicker text-ink">
-              Categories
-            </h2>
-          </div>
+          <h2 id="categories-title" className="fw-kicker text-ink">
+            Categories
+          </h2>
           <SearchBar value={query} onChange={setQuery} found={results.length} total={CATEGORIES.length} />
         </div>
 

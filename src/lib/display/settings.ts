@@ -39,7 +39,7 @@ export const CARD_STYLES = ['line', 'index', 'spotlight', 'tilt', 'echo'] as con
 export type CardStyle = (typeof CARD_STYLES)[number];
 
 /** How the categories on the home page are laid out (chosen on /landing). */
-export const LANDING_STYLES = ['index', 'cards', 'poster', 'compact'] as const;
+export const LANDING_STYLES = ['index', 'cards', 'poster', 'compact', 'directory', 'split', 'accordion', 'wall'] as const;
 export type LandingStyle = (typeof LANDING_STYLES)[number];
 
 /** The welcome at the top of the home page (chosen on /landing). */

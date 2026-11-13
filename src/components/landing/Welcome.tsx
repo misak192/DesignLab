@@ -31,7 +31,8 @@ export default function Welcome({ style }: { style: WelcomeStyle }) {
 
   const full = style === 'full';
   return (
-    <div className={full ? 'flex min-h-[68vh] flex-col justify-center' : undefined}>
+    // No tall block: the categories follow right after the welcome, with one even gap.
+    <div className={full ? 'flex flex-col pb-4 pt-6 sm:pt-10' : undefined}>
       <HomeHero>
         <header className="flex flex-col gap-10">
           <p className="fw-vogue text-[0.875rem] tracking-[0.5em] text-ink-2">FrissonWorks</p>

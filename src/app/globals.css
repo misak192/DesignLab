@@ -46,10 +46,8 @@ body.light-mode {
   --t1: color-mix(in srgb, var(--theme-primary-glow) 55%, #000);
   --t2: color-mix(in srgb, var(--theme-secondary-glow) 55%, #000);
   --t3: color-mix(in srgb, var(--node-4) 55%, #000);
-  /* A pale halo on a pale page (the design book leaves light mode's halo open; this is the cleaner of the two). */
-  --halo-sm: 0 0.6px 0.8px rgb(255 255 255 / 0.9);
-  --halo-lg: 0 0.6px 1.1px rgb(255 255 255 / 0.8);
-  --halo-drop: drop-shadow(0 0.6px 0.8px rgb(255 255 255 / 0.9));
+  /* The halo is ALWAYS black, even for dark text on a pale page (Michal, 13 Nov 2026: a white shadow looks hideous). The dark-mode
+     values on body apply; only the edge is left off, because stroking dark text with black would thicken it. */
   --edge: 0 transparent;
   --glow: color-mix(in srgb, var(--theme-primary-glow) 14%, transparent);
 }
@@ -352,6 +350,12 @@ body[data-kinematics="off"] *::after {
 /* Offscreen titles pause; OFF is already handled by the kinematics rule above and by each design drawing itself still. */
 .fw-hero[data-live="false"] * { animation-play-state: paused !important; }
 
+/* Smoke: a wisp of the word rises off it, spreads a little and fades. */
+@keyframes fw-h-smoke {
+  0% { transform: translate(0, 4px) scale(1, 1); opacity: 0; }
+  18% { opacity: 0.4; }
+  100% { transform: translate(var(--sx, 0px), -58px) scale(1.05, 1.18); opacity: 0; }
+}
 @keyframes fw-h-breathe { from { opacity: 0.72; } to { opacity: 1; } }
 @keyframes fw-h-hue { from { filter: hue-rotate(-26deg); } to { filter: hue-rotate(26deg); } }
 @keyframes fw-h-sway { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(var(--sx), var(--sy)); } }
@@ -1011,7 +1015,7 @@ body.light-mode { --dot-glass: 120 132 170; }
 .fw-ct[data-v="radical"][data-zero="true"], .fw-ct[data-v="overline"][data-zero="true"] { padding-left: 0; margin-top: 0; }
 
 /* ── /time: text inside the drawings (halo as a canvas stroke behind the fill) and the entries ── */
-.fw-tm-t { font-family: inherit; font-weight: 300; fill: var(--ink-2); paint-order: stroke; stroke: var(--canvas); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.fw-tm-t { font-family: inherit; font-weight: 300; fill: var(--ink-2); paint-order: stroke; stroke: rgb(0 0 0 / 0.6); stroke-width: 2.2px; stroke-linejoin: round; pointer-events: none; }
 .fw-tm-t[data-hi="true"] { fill: var(--ink); }
 .fw-tm-box { transform-box: fill-box; transform-origin: center; }
 @keyframes fw-tm-fade { from { opacity: 0; } to { opacity: 1; } }

@@ -8,7 +8,7 @@ import SizedHero from './SizedHero';
 
 export default function HomeHero({ children }: { children: ReactNode }) {
   return (
-    <SizedHero word="Frissonworks" base={150} overlap={0.1} className="pb-20 sm:pb-28">
+    <SizedHero word="Frissonworks" base={150} overlap={0.1} className="pb-10 sm:pb-12">
       {children}
     </SizedHero>
   );

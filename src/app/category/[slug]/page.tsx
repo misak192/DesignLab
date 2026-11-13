@@ -31,7 +31,7 @@ async function CategoryContent({ params }: Props) {
     <>
       <CategoryTabs />
       <main className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col px-7 pb-32 pt-10 sm:pt-14">
-        <CategoryHero category={category} index={index} count={experiments.length} />
+        <CategoryHero category={category} count={experiments.length} />
         <section aria-label={`${category.name} experiments`}>
           <ExperimentGrid experiments={experiments} />
         </section>

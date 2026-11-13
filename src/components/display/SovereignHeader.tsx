@@ -2,7 +2,7 @@
  * File: src/components/display/SovereignHeader.tsx
  * Description: The Sovereign header from LoreLyst, for the Design Lab: a profile glyph top right that opens a panel
  * of plain settings rows (label small on the left, value large on the right, nothing behind either). Each row
- * cycles its setting when tapped: LIGHT, COLOUR, MOTION (the amount), TEXT (size), SHADOW. Then a link to ALL SETTINGS (the
+ * cycles its setting when tapped: LIGHT, COLOUR, MOTION (the amount), TEXT (size), BG (intensity + background), SHADOW. Then a link to ALL SETTINGS (the
  * /settings page: LOOK, TEXT, MOTION) and links to Home and to every category of the lab. No accounts here, so no sign-in. The
  * settings are saved in this browser only.
  */
@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDisplay, useMotion } from './DisplayProvider';
 import { transitionFor } from '@/lib/motion/presets';
+import { BG_ENGINES, BG_INTENSITIES, BG_LABEL } from '@/lib/display/background/engines';
 import { CATEGORIES } from '@/lib/experiments';
 import { MOTION_LABEL, MOTION_LEVELS, SKINS, TEXT_SCALES, nextOf } from '@/lib/display/settings';
 
@@ -83,11 +84,35 @@ export default function SovereignHeader() {
               className="fw-sov__panel"
             >
               {/* The quick settings: what people change in the moment, and the accessibility opt-outs (motion, text size, shadow).
-                  Everything else is on /settings, in three groups: LOOK, TEXT, MOTION. */}
+                  Everything else (type, titles, motion style) is on /settings, in three groups: LOOK, TEXT, MOTION. */}
               <Row label="LIGHT" value={settings.light ? 'LIGHT' : 'DARK'} onClick={() => set({ light: !settings.light })} />
               <Row label="COLOUR" value={settings.skin.toUpperCase()} onClick={() => set({ skin: nextOf(SKINS, settings.skin) })} />
               <Row label="MOTION" value={MOTION_LABEL[settings.motion]} onClick={() => set({ motion: nextOf(MOTION_LEVELS, settings.motion) })} />
               <Row label="TEXT" value={settings.text.toUpperCase()} onClick={() => set({ text: nextOf(TEXT_SCALES, settings.text) })} />
+
+              {/* BG reads "CORE MARBLE": the first word is the intensity, the second the background; two tap targets. */}
+              <div className="fw-sov__row fw-sov__row--dual">
+                <span className="fw-sov__label">BG</span>
+                <span className="fw-sov__duo">
+                  {settings.bgEngine !== 'off' && (
+                    <button
+                      type="button"
+                      className="fw-sov__value fw-sov__part"
+                      onClick={() => set({ bgIntensity: nextOf(BG_INTENSITIES, settings.bgIntensity) })}
+                    >
+                      {settings.bgIntensity.toUpperCase()}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="fw-sov__value fw-sov__part"
+                    onClick={() => set({ bgEngine: nextOf(BG_ENGINES.filter((e) => e !== 'scenery'), settings.bgEngine) })}
+                  >
+                    {BG_LABEL[settings.bgEngine]}
+                  </button>
+                </span>
+              </div>
+
               <Row label="SHADOW" value={settings.shadow ? 'ON' : 'OFF'} onClick={() => set({ shadow: !settings.shadow })} />
 
               <Link href="/settings" onClick={() => setOpen(false)} className="fw-sov__all">

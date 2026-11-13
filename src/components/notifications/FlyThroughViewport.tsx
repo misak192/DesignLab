@@ -290,7 +290,7 @@ export default function ButtonFlyStage({ signs, align = 'center' }: ButtonFlySta
                       color: 'var(--canvas)',
                       WebkitTextStroke: '8px var(--canvas)',
                       paintOrder: 'stroke fill',
-                      textShadow: '0 0 22px var(--canvas), 0 0 10px var(--canvas)',
+                      textShadow: '0 0 22px rgb(0 0 0 / 0.4), 0 0 10px rgb(0 0 0 / 0.4)',
                     }}
                   >
                     {sign.text}

@@ -374,29 +374,56 @@ function Airbrush({ text, g, id, tint, m, light }: VP) {
 
 /* ---- 4 · Smoke: soft letters that ripple like smoke -------------------------------------------------------------- */
 
-function Smoke({ text, g, id, tint, m, light, live }: VP) {
+/*
+ * The letters stay clear and calm, strongest at the baseline and thinning upward; wisps of the same letters, stretched and blurred
+ * by a little noise, rise off them and fade (three layers, started a third of a loop apart). The noise filters are static and
+ * only transform and opacity move, so it is light. The first version bent the letters with heavy animated noise and read
+ * as a horror sign.
+ */
+const WISPS = [
+  { seed: 3, at: 0, drift: -10 },
+  { seed: 11, at: 1 / 3, drift: 8 },
+  { seed: 27, at: 2 / 3, drift: -4 },
+];
+
+function Smoke({ text, g, id, tint, m, light }: VP) {
   const ott = m.level === 'ott';
   const hi = bright(tint, light);
-  const turb = useRef<SVGFETurbulenceElement>(null);
-  const disp = useRef<SVGFEDisplacementMapElement>(null);
-  useAnimationFrame((t) => {
-    if (!live || !m.scale) return;
-    const k = ott ? 1.8 : 1;
-    turb.current?.setAttribute('baseFrequency', `${0.011 + 0.003 * Math.sin((t * k) / 4200)} ${0.028 + 0.004 * Math.cos((t * k) / 5300)}`);
-    disp.current?.setAttribute('scale', String((ott ? 74 : 44) + 14 * Math.sin((t * k) / 3100)));
-  });
+  const loop = ott ? 6.5 : 11;
   return (
     <>
       <defs>
-        <VGrad id={`${id}f`} g={g} stops={[[0, hi, 0.46], [0.6, tint.c1, 0.16], [1, tint.c1, 0.02]]} />
-        <Blur id={`${id}b`} g={g} sd={16} />
+        {/* Strong at the baseline, thin at the top of the capitals. */}
+        <VGrad id={`${id}f`} g={g} stops={[[0, hi, 0.34], [0.55, tint.c1, 0.5], [1, hi, 0.64]]} />
+        <Blur id={`${id}b`} g={g} sd={14} />
         <filter id={`${id}sm`} filterUnits="userSpaceOnUse" x={g.vx} y={g.vy} width={g.vw} height={g.vh}>
-          <feTurbulence ref={turb} type="fractalNoise" baseFrequency="0.011 0.028" numOctaves="2" seed="4" result="t" />
-          <feDisplacementMap ref={disp} in="SourceGraphic" in2="t" scale="44" xChannelSelector="R" yChannelSelector="G" result="d" />
-          <feGaussianBlur in="d" stdDeviation="2.2" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.014 0.02" numOctaves="2" seed="5" result="t" />
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="6" xChannelSelector="R" yChannelSelector="G" result="d" />
+          <feGaussianBlur in="d" stdDeviation="0.9" />
         </filter>
+        {WISPS.map((w, i) => (
+          <filter key={i} id={`${id}w${i}`} filterUnits="userSpaceOnUse" x={g.vx} y={g.vy - 80} width={g.vw} height={g.vh + 160}>
+            <feTurbulence type="fractalNoise" baseFrequency="0.007 0.018" numOctaves="3" seed={w.seed} result="t" />
+            <feDisplacementMap in="SourceGraphic" in2="t" scale="34" xChannelSelector="R" yChannelSelector="G" result="d" />
+            <feGaussianBlur in="d" stdDeviation="4.5" />
+          </filter>
+        ))}
       </defs>
-      <Word text={text} fill={url(`${id}f`)} filter={url(`${id}b`)} op={0.6} />
+      <Word text={text} fill={url(`${id}f`)} filter={url(`${id}b`)} op={0.28} />
+      {WISPS.map((w, i) => (
+        <g
+          key={i}
+          style={{
+            transformBox: 'fill-box',
+            transformOrigin: '50% 100%',
+            opacity: 0.3,
+            ...vars({ '--sx': `${w.drift}px` }),
+            ...anim(m, `fw-h-smoke ${loop}s linear ${-w.at * loop}s infinite`),
+          }}
+        >
+          <Word text={text} fill={url(`${id}f`)} filter={url(`${id}w${i}`)} />
+        </g>
+      ))}
       <Word text={text} fill={url(`${id}f`)} filter={url(`${id}sm`)} />
     </>
   );
@@ -479,11 +506,11 @@ function Satin({ text, g, id, tint, m, light }: VP) {
   );
 }
 
-/* ---- 8 · Mirror: the word stands on a floor and fades away underneath -------------------------------------------- */
+/* ---- 8 · Mirror: the word, and its reflection fading away underneath. Nothing between them: no floor line. ------- */
 
 function Mirror({ text, g, id, tint, light }: VP) {
   const hi = bright(tint, light);
-  const gap = 10;
+  const gap = 6;
   return (
     <>
       <defs>
@@ -491,14 +518,7 @@ function Mirror({ text, g, id, tint, light }: VP) {
         {/* Local to the flipped copy: the baseline end is the near end of the reflection. */}
         <VGrad id={`${id}r`} g={g} stops={[[0, tint.c2, 0], [1, tint.c2, 0.26]]} />
         <Blur id={`${id}b2`} g={g} sd={1.6} />
-        {/* The floor: a hairline that is brightest in the middle and fades to nothing at both ends. */}
-        <linearGradient id={`${id}l`} gradientUnits="userSpaceOnUse" x1={0} x2={g.textW} y1={0} y2={0}>
-          <stop offset={0} style={{ stopColor: hi, stopOpacity: 0 }} />
-          <stop offset={0.5} style={{ stopColor: hi, stopOpacity: 0.85 }} />
-          <stop offset={1} style={{ stopColor: hi, stopOpacity: 0 }} />
-        </linearGradient>
       </defs>
-      <rect x={0} y={SIZE + gap / 2 - 1.2} width={g.textW} height={2.4} style={{ fill: url(`${id}l`) }} />
       <g transform={`translate(0 ${SIZE * 2 + gap}) scale(1 -1)`}>
         <Word text={text} fill={url(`${id}r`)} filter={url(`${id}b2`)} />
       </g>

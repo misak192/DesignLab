@@ -19,6 +19,8 @@ export interface CardProps {
   index: number;
   /** On the design page: look and move like the card, but don't navigate. */
   preview?: boolean;
+  /** Draw the position number (default). The home page turns it off for categories: a number there only adds noise. */
+  numbered?: boolean;
 }
 
 const pad = (i: number) => String(i + 1).padStart(2, '0');
@@ -49,7 +51,7 @@ function useArrival(index: number) {
 }
 
 /* 1 · LINE: a number, a title, a sentence, and a hairline that fills with colour. */
-export function LineCard({ experiment, index, preview }: CardProps) {
+export function LineCard({ experiment, index, preview, numbered = true }: CardProps) {
   const m = useMotion();
   const arrival = useArrival(index);
   return (
@@ -57,7 +59,7 @@ export function LineCard({ experiment, index, preview }: CardProps) {
       <motion.div initial="rest" whileHover="hover" whileFocus="hover" animate="rest" className="h-full">
         <CardLink experiment={experiment} preview={preview} className="flex h-full min-h-[48px] flex-col gap-5 py-2 outline-offset-8">
           <div className="flex items-baseline gap-3">
-            <span className="fw-kicker fw-tabular text-t1">{pad(index)}</span>
+            {numbered && <span className="fw-kicker fw-tabular text-t1">{pad(index)}</span>}
             <span className="fw-kicker text-ink-2">{experiment.tag}</span>
           </div>
           <h2 className="fw-big text-[29px] font-light leading-[1.15] text-ink">{experiment.title}</h2>
@@ -129,7 +131,7 @@ export function IndexCard({ experiment, index, preview }: CardProps) {
 }
 
 /* 3 · SPOTLIGHT: a soft glow in the skin colour follows the pointer; the words lift into it. */
-export function SpotlightCard({ experiment, index, preview }: CardProps) {
+export function SpotlightCard({ experiment, index, preview, numbered = true }: CardProps) {
   const m = useMotion();
   const arrival = useArrival(index);
   const [hot, setHot] = useState(false);
@@ -164,7 +166,7 @@ export function SpotlightCard({ experiment, index, preview }: CardProps) {
         )}
         <CardLink experiment={experiment} preview={preview} className="relative flex min-h-[48px] flex-col gap-4 py-3 outline-offset-8">
           <span className="fw-kicker text-t1">
-            <span className="fw-tabular">{pad(index)}</span> <span className="text-ink-2">{experiment.tag}</span>
+            {numbered && <span className="fw-tabular">{pad(index)} </span>}<span className="text-ink-2">{experiment.tag}</span>
           </span>
           <motion.span
             animate={{ y: hot && m.scale ? -4 * m.parallax : 0 }}
@@ -187,7 +189,7 @@ export function SpotlightCard({ experiment, index, preview }: CardProps) {
 }
 
 /* 4 · TILT: the words sit on separate layers in 3D; the card leans toward the pointer and the layers part. */
-export function TiltCard({ experiment, index, preview }: CardProps) {
+export function TiltCard({ experiment, index, preview, numbered = true }: CardProps) {
   const m = useMotion();
   const arrival = useArrival(index);
   const px = useMotionValue(0);
@@ -216,7 +218,7 @@ export function TiltCard({ experiment, index, preview }: CardProps) {
       >
         <CardLink experiment={experiment} preview={preview} className="flex min-h-[48px] flex-col gap-4 py-3 outline-offset-8 [transform-style:preserve-3d]">
           <span className="fw-kicker text-t1" style={{ transform: 'translateZ(30px)' }}>
-            <span className="fw-tabular">{pad(index)}</span> <span className="text-ink-2">{experiment.tag}</span>
+            {numbered && <span className="fw-tabular">{pad(index)} </span>}<span className="text-ink-2">{experiment.tag}</span>
           </span>
           <span className="fw-big text-[29px] font-light leading-[1.15] text-ink" style={{ transform: 'translateZ(70px)' }}>
             {experiment.title}
@@ -232,7 +234,7 @@ export function TiltCard({ experiment, index, preview }: CardProps) {
 }
 
 /* 5 · ECHO: the title is repeated as faint outlines that fan out behind it on hover; tracking opens up. */
-export function EchoCard({ experiment, index, preview }: CardProps) {
+export function EchoCard({ experiment, index, preview, numbered = true }: CardProps) {
   const m = useMotion();
   const arrival = useArrival(index);
   return (
@@ -240,7 +242,7 @@ export function EchoCard({ experiment, index, preview }: CardProps) {
       <motion.div initial="rest" whileHover="hover" whileFocus="hover" animate="rest">
         <CardLink experiment={experiment} preview={preview} className="flex min-h-[48px] flex-col gap-4 py-3 outline-offset-8">
           <span className="fw-kicker text-t1">
-            <span className="fw-tabular">{pad(index)}</span> <span className="text-ink-2">{experiment.tag}</span>
+            {numbered && <span className="fw-tabular">{pad(index)} </span>}<span className="text-ink-2">{experiment.tag}</span>
           </span>
 
           <span className="relative block">

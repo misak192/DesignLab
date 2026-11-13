@@ -1,7 +1,7 @@
 /**
  * File: src/components/landing/LandingLab.tsx
- * Description: The /landing page: where the design of the home page is decided. Four layouts for the categories (index, cards,
- * poster, compact), each drawn live from the real categories, with "Use on home" to choose one; and the three things that change
+ * Description: The /landing page: where the design of the home page is decided. Eight layouts for the categories (index, cards,
+ * poster, compact, directory, split, accordion, wall), each drawn live from the real categories, with "Use on home" to choose one; and the three things that change
  * how any of them looks: the hero title design (the same list as /hero-titles), the card design (the same list as /cards) and the
  * welcome (full, compact, off). Everything chosen is saved with the other display settings and applies to the home page at once.
  */
@@ -19,7 +19,11 @@ const LAYOUT_INFO: Record<LandingStyle, { name: string; note: string }> = {
   index: { name: 'Index', note: 'Each category is a hero title in the saved design, led by its own colour, with its sentence on top. The one that shows the hero titles off.' },
   cards: { name: 'Cards', note: 'The card design chosen below, two to a row. The same cards the experiments use, so the whole lab reads as one.' },
   poster: { name: 'Poster', note: 'Huge, thin Vogue names, one to a row, with a hairline between. Quiet, and very FrissonWorks.' },
-  compact: { name: 'Compact', note: 'One line each: number, name, count and sentence. The fastest to scan, and the best with the search.' },
+  compact: { name: 'Compact', note: 'One line each: name, count and sentence. The fastest to scan, and the best with the search.' },
+  directory: { name: 'Directory', note: 'Every category with its experiments listed under it, in columns. Any page is one tap from the home page.' },
+  split: { name: 'Split', note: 'The names on the left; point at one and it opens on the right with its experiments. On a phone it opens under its name.' },
+  accordion: { name: 'Accordion', note: 'One row per category that opens in place to show what is inside. Quiet, and short on a phone.' },
+  wall: { name: 'Wall', note: 'The names as one typographic wall, each as big as what is inside it, in its own colour. Point at one to read it.' },
 };
 
 const WELCOME_INFO = { full: 'Full', compact: 'Compact', off: 'Off' } as const;
