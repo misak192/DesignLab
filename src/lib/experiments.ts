@@ -174,6 +174,13 @@ export const EXPERIMENTS: Experiment[] = [
     category: 'type',
   },
   {
+    href: '/brand',
+    title: 'Brand',
+    blurb: 'One brand system: the FW mark with a raised W, app abbreviations with a raised L, favicons and Android icons, the FrissonWorks intro, the slot-machine app reel and the superscript as a UI device. Six tabs, twenty numbered options each.',
+    tag: 'Brand · Superscript',
+    category: 'type',
+  },
+  {
     href: '/buttons',
     title: 'Buttons',
     blurb: 'Fifty borderless kinetic buttons: press a word and it pulses, jumps, scatters into stars, is sliced by light or zooms into nothing.',
@@ -186,6 +193,20 @@ export const EXPERIMENTS: Experiment[] = [
     blurb: 'Sixteen ways to show records and periods over time: tree rings, spiral, warming stripes, streamgraph, ridgeline, rose, sunburst, arcs, sankey, lanes and a constellation.',
     tag: 'Data · Periods',
     category: 'data',
+  },
+  {
+    href: '/illusions',
+    title: 'Illusion backgrounds',
+    blurb: 'Ten optical-illusion backgrounds for apps and Android: bulging checkerboard, café wall, scintillating grid, Ouchi float, rotating snakes, and versions that follow the clock or react to actions.',
+    tag: 'Light · Illusions',
+    category: 'light',
+  },
+  {
+    href: '/dot-grid',
+    title: 'Dot grid illusion',
+    blurb: 'A background pixelated into painted squares with light and dark dots on the corners: the dot pattern bends the rows. Your colours, patterns, movement and a cursor lens.',
+    tag: 'Light · Illusion',
+    category: 'light',
   },
   {
     href: '/master',

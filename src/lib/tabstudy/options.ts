@@ -58,7 +58,7 @@ export const TAB_OPTIONS: TabOption[] = [
   { id: '27', name: 'Letter spread', category: 'Kinetic letters', description: 'The tracking opens from 0.2em to 0.5em.' },
   { id: '28', name: 'Letter weight wave', category: 'Kinetic letters', description: 'The weight ripples from 300 to 500 across the letters.' },
   { id: '29', name: 'Letter-coded bar', category: 'Kinetic letters', description: 'Each letter takes a colour by its position, like a bar chart.' },
-  { id: '30', name: 'Letter lift', category: 'Kinetic letters', description: 'The first letter lifts and takes the accent; the rest stay put.' },
+  { id: '30', name: 'Letter grow', category: 'Kinetic letters', description: 'The first letter grows bigger and takes the accent; the rest stay put.' },
 
   /* Breathing and idle */
   { id: '31', name: 'Breathing scale', category: 'Breathing and idle', description: 'The word scales between 1.00 and 1.03 on a 4s cycle.' },
@@ -68,5 +68,5 @@ export const TAB_OPTIONS: TabOption[] = [
 
   /* Spatial and particles */
   { id: '35', name: 'Depth lift', category: 'Spatial and particles', description: 'The word moves toward you: larger, with a soft shadow below.' },
-  { id: '36', name: 'Dust dissolve', category: 'Spatial and particles', description: 'Eight fine particles drift off the word and fade.' },
+  { id: '36', name: 'Dust dissolve', category: 'Spatial and particles', description: 'Fourteen glowing particles drift off the word and fade.' },
 ];

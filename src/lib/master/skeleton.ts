@@ -29,12 +29,14 @@ export interface MasterSection {
 
 /** The components, in page order. The Tab switcher at the top of the page is the motion switcher; Tabs at the bottom is the component. */
 export const MASTER_SECTIONS: MasterSection[] = [
-  { id: 'titles', name: 'Titles', note: 'Kicker, Vogue title, hero line and reading text.' },
-  { id: 'buttons', name: 'Buttons', note: 'Primary, quiet, disabled and icon.' },
-  { id: 'sliders', name: 'Sliders', note: 'A track and a thumb, with a value.' },
-  { id: 'knobs', name: 'Knobs', note: 'A dial with a value.' },
-  { id: 'timers', name: 'Timers', note: 'Counting up and counting down.' },
+  { id: 'titles', name: 'Titles', note: 'Kicker, Vogue title, the hero behind it and reading text.' },
+  { id: 'buttons', name: 'Buttons', note: 'Primary, quiet and disabled. Press them.' },
+  { id: 'tabs', name: 'Tabs', note: 'A row of tabs; the selected one is shown in the style.' },
+  { id: 'lines', name: 'Lines', note: 'One thin, lens-shaped line per style.' },
+  { id: 'sliders', name: 'Sliders', note: 'Drag the ball, or use the arrow keys.' },
+  { id: 'knobs', name: 'Knobs', note: 'Drag up and down, or use the arrow keys.' },
+  { id: 'timers', name: 'Timers', note: 'Counting down and counting up, live.' },
   { id: 'steppers', name: 'Up and down', note: 'A number with an up and a down button.' },
   { id: 'voting', name: 'Voting', note: 'Radio buttons for up and down votes.' },
-  { id: 'tabs', name: 'Tabs', note: 'A row of tabs; the selected one is lit.' },
+  { id: 'composer', name: 'Comment box', note: 'The stars glow, the only one chosen. Write, then post.' },
 ];

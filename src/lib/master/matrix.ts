@@ -1,13 +1,13 @@
 /**
  * File: src/lib/master/matrix.ts
- * Description: The decision matrix behind Lab Master (pure TypeScript). Columns are the motion STYLES, rows are the things a
- * style has to decide, in three groups: Moments (how things happen), Type (what you read) and Controls (what you touch).
- * A cell says which lab design a row uses under a style. Status: `chosen` = Michal picked it, `proposed` = my suggestion from
- * reading every lab page, `gap` = the lab has nothing suitable yet. Michal looks through the lab pages and says "this one,
- * for that row, under that style"; the cell becomes `chosen`. When every cell is chosen the components are coded from it.
- * The /master page draws this table, so the document and the page cannot drift.
+ * Description: The decision matrix behind Lab Master (pure TypeScript). Columns are the motion STYLES, rows are the things a style has to
+ * decide, in three groups: Moments (how things happen), Type (what you read) and Controls (what you touch). A cell says which lab design a
+ * row uses under a style. Status: `chosen` = Michal picked it, `proposed` = my suggestion (many are now built live on /master, from his
+ * ideas), `gap` = the lab has nothing suitable yet. Michal looks through the lab pages and says "this one, for that row, under that
+ * style"; the cell becomes `chosen`. When every cell is chosen the components are coded from it. /master draws this table, so the document
+ * and the page cannot drift.
  *
- * Off, Normal and OTT are not columns: they are the AMOUNT (how much any style moves) and apply to every cell.
+ * Off, Normal and OTT (FULL) are not columns: they are the AMOUNT (how much any style moves) and apply to every cell.
  */
 export type CellStatus = 'chosen' | 'proposed' | 'gap';
 
@@ -33,10 +33,10 @@ export interface MatrixRow {
 }
 
 export const MATRIX_COLUMNS: MatrixColumn[] = [
-  { id: 'plain', name: 'Plain', signature: 'A hairline and a soft focus. Calm, nothing shows off.' },
-  { id: 'kinetic', name: 'Kinetic', signature: 'Letters and numbers are alive: the letter wave.' },
-  { id: 'slice', name: 'Slice', signature: 'Everything is cut in slices: the slice jitter.' },
-  { id: 'stars', name: 'Stars', signature: 'Things break into stardust and re-form.' },
+  { id: 'plain', name: 'Plain', signature: 'Mirror: the word and its reflection, with the hero behind the title.' },
+  { id: 'kinetic', name: 'Kinetic', signature: 'Letters and numbers are alive: the letter wave, the letter that grows.' },
+  { id: 'slice', name: 'Slice', signature: 'Everything is cut in strips that slide apart and join.' },
+  { id: 'stars', name: 'Stars', signature: 'LoreLyst’s stars and dust: things dissipate and re-form.' },
   { id: 'zoom', name: 'Zoom', signature: 'Things fly through the screen, toward you and past you.' },
 ];
 
@@ -49,17 +49,20 @@ export const MATRIX_ROWS: MatrixRow[] = [
   { id: 'titles', name: 'Titles', group: 'Type' },
   { id: 'buttons', name: 'Buttons', group: 'Controls' },
   { id: 'tabs', name: 'Tabs', group: 'Controls' },
+  { id: 'lines', name: 'Lines', group: 'Controls' },
   { id: 'voting', name: 'Voting', group: 'Controls' },
   { id: 'knobs', name: 'Knobs', group: 'Controls' },
   { id: 'sliders', name: 'Sliders', group: 'Controls' },
   { id: 'steppers', name: 'Up and down', group: 'Controls' },
   { id: 'timers', name: 'Timers', group: 'Controls' },
+  { id: 'composer', name: 'Comment box', group: 'Controls' },
 ];
 
+const C = (from: string, note?: string): MatrixCell => ({ status: 'chosen', from, note });
 const P = (from: string, note?: string): MatrixCell => ({ status: 'proposed', from, note });
 const G = (from: string, note?: string): MatrixCell => ({ status: 'gap', from, note });
 
-/** Filled so far: matrix[rowId][columnId]. Everything here is my proposal until Michal confirms it. */
+/** Filled so far: matrix[rowId][columnId]. */
 export const MATRIX: Record<string, Record<string, MatrixCell | undefined> | undefined> = {
   /* ── Moments ── */
   arrival: {
@@ -84,7 +87,7 @@ export const MATRIX: Record<string, Record<string, MatrixCell | undefined> | und
     zoom: P('Notifications · Warp Breach', 'Grows so huge it flies past you. Sentences: Tunnel Train.'),
   },
   pointer: {
-    plain: P('None', 'Quiet: press feedback only (Motion · Press text).'),
+    plain: P('None', 'Quiet: press feedback only.'),
     kinetic: P('Trails · glowing ribbon', 'Desktop trail, light ripple on tap.'),
     slice: G('No sliced trail yet', 'Idea: the ribbon drawn in slices.'),
     stars: P('Trails · glowing ribbon, star tone', 'Light Tone set to the stars colour.'),
@@ -93,69 +96,83 @@ export const MATRIX: Record<string, Record<string, MatrixCell | undefined> | und
 
   /* ── Type ── */
   hero: {
-    plain: P('Hero Titles · Mist', 'Airy and barely visible.'),
+    plain: C('Hero Titles · Mirror', 'Your favourite, and the default. It sits behind the Vogue title, starting lower so it bleeds under the subtitle.'),
     kinetic: P('Hero Titles · Veil', 'Letters surface out of the mist one by one, then breathe.'),
-    slice: P('Hero Titles · Slice', 'You called it superb.'),
-    stars: P('Hero Titles · Airbrush', 'Closest to stardust (soft grain). A real star-field hero does not exist yet.'),
-    zoom: P('Hero Titles · Depth', 'You liked Depth on a normal fill.'),
+    slice: C('Hero Titles · Slice', 'Amazing. The scroll travel is cut to a third (13 Nov): it moved too much left and right.'),
+    stars: P('Hero Titles · Airbrush', 'You love Airbrush; it is here for Stars, and a few stars in it would make it more starry. Could swap with Zoom.'),
+    zoom: C('Hero Titles · Depth', 'Great. The new Smoke is similar: pick it in Settings → Titles.'),
   },
   titles: {
-    plain: P('Motion · Kinetic type (Normal)', 'Words rise and fade in, calm.'),
-    kinetic: P('Motion · Spread title and Proximity text', 'Tracking opens as you approach. Tab Selection 27 Letter spread is the same idea.'),
-    slice: P('Tab Selection · 20 Slice jitter', 'Every title arrives in three slices.'),
-    stars: P('Type Dissolve', 'Letters break into glowing particles. Arrival is the reverse.'),
-    zoom: P('Notifications · Tunnel Train', 'Words queue behind one another and each swells past the camera: your fly-through text.'),
+    plain: C('Vogue title with the hero behind it', 'The hero starts lower than the title and runs under the subtitle: the clear title, and the one that is only light.'),
+    kinetic: P('Letters rise in turn', 'The arrival of the title: a wave across the letters.'),
+    slice: P('Strips converge', 'The arrival of the title: it comes together from cut strips.'),
+    stars: P('Clears out of a blur', 'The arrival of the title: like dust gathering into letters.'),
+    zoom: P('Flies in from far', 'The arrival of the title: it comes at you and settles.'),
   },
 
   /* ── Controls ── */
   buttons: {
-    plain: P('Motion · Press text', 'A quiet text button that answers the press.'),
+    plain: P('Mirror on press', 'Press: the word gets its reflection underneath, then it fades.'),
     kinetic: P('Tab Selection · 25 Letter wave', 'The letters rise in turn on press.'),
-    slice: P('Tab Selection · 20 Slice jitter', 'On press.'),
-    stars: P('Backgrounds · Stars (the Constellation button)', 'Dissipates into stars behind it. You asked for this one.'),
-    zoom: P('Buttons · Zoom to nothing', 'On press the word zooms away, or in.'),
+    slice: C('The word rests cut in strips', 'Press: the strips join into the whole word, then cut again.'),
+    stars: C('LoreLyst constellation button', 'Stars behind the word. Press: they blow apart, dissipate and form again.'),
+    zoom: P('Buttons · Zoom to nothing', 'Press: the word zooms away and comes back from nothing.'),
   },
   tabs: {
-    plain: P('Tab Selection · 02 Underline slide', 'One shared line glides between tabs.'),
-    kinetic: P('Tab Selection · 25 Letter wave'),
-    slice: P('Tab Selection · 20 Slice jitter'),
-    stars: P('Tab Selection · 36 Dust dissolve', 'Eight particles drift off the selected word.'),
+    plain: P('Selected tab on its reflection', 'The mirror, as on the buttons.'),
+    kinetic: C('Tab Selection · 30 Letter grow', 'The first letter grows bigger (not higher) and takes the accent; the rest stay white.'),
+    slice: C('The selected tab is the cut one', 'Like the button: the selected word is in strips.'),
+    stars: C('Tab Selection · 36 Dust dissolve', 'Fourteen glowing particles now (eight were too faint).'),
     zoom: P('Tab Selection · 35 Depth lift', 'The selected word moves toward you, with a soft shadow.'),
   },
+  lines: {
+    plain: C('Lines · S02 Mist', 'Thin and lens-shaped. The ends now fade out fully (no visible ray at the end).'),
+    kinetic: C('Lines · S04 Ember fade', 'Strong where it starts, gone before it ends. Thin and lens-shaped.'),
+    slice: C('Lines · N06 Hologram', 'Scanlines, flickering faintly. Thin and lens-shaped.'),
+    stars: C('Lines · T01 Star dust with T03 Drift', 'Made a thin line (it was too thick). Lens-shaped.'),
+    zoom: C('Lines · D03 Smoke', 'Great as a line. Thin and lens-shaped.'),
+  },
   voting: {
-    plain: P('Comments · +up | −down', 'Coloured by your own vote; springs read the amount.'),
-    kinetic: P('Charts · Proportional vote split', 'The letters fill from green to red as votes arrive.'),
-    slice: G('Nothing sliced yet', 'Idea: the +up and −down count slice-jitter when it changes.'),
-    stars: G('Nothing starry yet', 'Idea: a vote bursts a few stars.'),
-    zoom: G('Nothing zoomed yet', 'Idea: the count zooms in from far to near when it changes.'),
+    plain: P('Comments · +up | −down', 'The count fades up and away, the new one rises in.'),
+    kinetic: P('Rolling count', 'The count rolls like a counter.'),
+    slice: P('Cut count', 'The count is cut: old strips slide away, new ones slide in.'),
+    stars: P('Dissolving count', 'The old count dissolves, the new one clears out of a blur.'),
+    zoom: P('Zooming count', 'The new count flies in from far.'),
   },
   knobs: {
-    plain: P('Notifications · Rotary knob', 'Hairline ring, one value.'),
-    kinetic: P('Notifications · Intensity knob', 'Five detents with a snap you can feel.'),
-    slice: G('No sliced knob yet', 'Idea: the ring drawn as slices.'),
-    stars: G('No starry knob yet', 'Idea: a ring of stars that lights as it turns.'),
-    zoom: G('No zoom knob yet', 'Idea: the value zooms toward you as you turn.'),
+    plain: P('Thin ring', 'A hairline ring and a pointer.'),
+    kinetic: P('Ticks that grow', 'Twenty-eight ticks; those passed grow and light up.'),
+    slice: P('Ring in strips', 'The ring is cut in three; hold it and the strips join.'),
+    stars: P('Ring of stars', 'Stars along the ring that light as it turns.'),
+    zoom: P('Ring, readout zooms', 'The number in the middle zooms toward you while you turn.'),
   },
   sliders: {
-    plain: P('Arrivals · Knob slider', 'Hairline track, accent thumb, live value. The only real slider in the lab.'),
-    kinetic: P('Motion · Rolling count', 'On the value: the number rolls as the thumb moves.'),
-    slice: G('No sliced slider yet'),
-    stars: G('No starry slider yet', 'Idea: the thumb trails stardust.'),
-    zoom: G('No zoom slider yet', 'Idea: the thumb grows toward you as you drag.'),
+    plain: P('Ball with its reflection', 'The track is the Mist line.'),
+    kinetic: P('Ball that springs', 'It springs bigger while you hold it. The track is the Ember fade line.'),
+    slice: P('Ball cut in strips', 'Hold it and the strips join. The track is the Hologram line.'),
+    stars: P('A star for a ball', 'The track is the Star dust line.'),
+    zoom: P('Ball comes toward you', 'It grows while you hold it. The track is the Smoke line.'),
   },
   steppers: {
-    plain: G('Nothing in the lab', 'A number with up and down chevrons is only in the skeleton.'),
-    kinetic: P('Motion · Rolling count', 'The number rolls up or down.'),
-    slice: G('Nothing in the lab'),
-    stars: G('Nothing in the lab'),
-    zoom: G('Nothing in the lab'),
+    plain: P('Number fades', 'The old number fades up and away, the new rises in.'),
+    kinetic: P('Number rolls', 'Like a counter.'),
+    slice: P('Number cut', 'The old strips slide away and the new strips slide in (your idea).'),
+    stars: P('Number dissolves', 'The old one dissolves, the new one clears out of a blur.'),
+    zoom: P('Number zooms', 'The new one flies in from far, the old one shrinks away.'),
   },
   timers: {
-    plain: G('Nothing in the lab', 'Only the skeleton has a timer; Charts has a timeline, which is different.'),
-    kinetic: P('Motion · Rolling count', 'Digits roll as they change.'),
-    slice: G('Nothing in the lab'),
-    stars: G('Nothing in the lab'),
-    zoom: G('Nothing in the lab', 'Idea: digits zoom from far to near as they change.'),
+    plain: P('Digits fade', 'Only the digit that changes moves. Progress is the Mist line.'),
+    kinetic: P('Digits roll', 'Progress is the Ember fade line.'),
+    slice: P('Digits cut', 'Progress is the Hologram line.'),
+    stars: P('Digits dissolve', 'Progress is the Star dust line.'),
+    zoom: P('Digits zoom', 'Progress is the Smoke line.'),
+  },
+  composer: {
+    plain: C('Backgrounds · Stars glow', 'The only comment-box glow you like. It lights while you write and the stars blow apart when you post.'),
+    kinetic: C('Backgrounds · Stars glow', 'The same in every style.'),
+    slice: C('Backgrounds · Stars glow', 'The same in every style.'),
+    stars: C('Backgrounds · Stars glow', 'The same in every style.'),
+    zoom: C('Backgrounds · Stars glow', 'The same in every style.'),
   },
 };
 
@@ -163,7 +180,8 @@ export const MATRIX: Record<string, Record<string, MatrixCell | undefined> | und
 export const MATRIX_LEFT_OUT: { name: string; why: string }[] = [
   { name: 'Off, Normal, OTT', why: 'These are the amount, not designs. Off is nothing moving, Full is OTT. They scale every cell above.' },
   { name: 'Comments, Charts', why: 'Their own product. They read the amount, and Comments is tuned in its own lab.' },
-  { name: 'Cards, Backgrounds, Glow, Glass, Fluid smoke', why: 'Look and atmosphere you choose in LOOK. A style may suggest a default (AUTO), it does not redesign them.' },
+  { name: 'Cards, Backgrounds, Glass, Fluid smoke', why: 'Look and atmosphere you choose in LOOK. A style may suggest a default (AUTO), it does not redesign them.' },
+  { name: 'Other comment-box glows', why: 'Only the stars glow was liked, so it is the one in every style.' },
   { name: 'Card to detail, Gestures', why: 'One behaviour under every style (the Shared Elements morph, drag to rank).' },
 ];
 

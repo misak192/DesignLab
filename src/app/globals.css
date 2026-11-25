@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../lib/brand/tokens.css";
 
 /*
  * FrissonWorks Design Lab: global styles.
@@ -1021,3 +1022,8 @@ body.light-mode { --dot-glass: 120 132 170; }
 @keyframes fw-tm-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fw-tm-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes fw-tm-pop { from { opacity: 0; transform: scale(0.35); } to { opacity: 1; transform: none; } }
+
+/* Brand study: the slowly turning ring of mark 17. */
+@keyframes fw-brand-spin { to { transform: rotate(360deg); } }
+.fw-brand-spin { animation: fw-brand-spin 6s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .fw-brand-spin { animation: none; } }

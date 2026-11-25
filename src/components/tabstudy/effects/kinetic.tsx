@@ -105,7 +105,7 @@ export function LetterCodedBar({ label, selected }: EffectProps) {
   );
 }
 
-/* 30 · the first letter lifts and takes the accent; the rest stay put */
+/* 30 · the first letter grows and takes the accent; the rest stay put (it lifted at first; Michal wanted it bigger, not higher) */
 export function LetterLift({ label, selected }: EffectProps) {
   const [first, ...rest] = Array.from(label);
   return (
@@ -114,9 +114,9 @@ export function LetterLift({ label, selected }: EffectProps) {
         aria-hidden
         className="inline-block"
         initial={false}
-        animate={{ y: selected ? -7 : 0 }}
-        transition={{ type: 'spring', stiffness: 380, damping: 18 }}
-        style={{ color: selected ? T1 : undefined, transition: 'color 0.35s var(--ease)' }}
+        animate={{ fontSize: selected ? '1.55em' : '1em' }}
+        transition={{ type: 'spring', stiffness: 320, damping: 20 }}
+        style={{ color: selected ? T1 : undefined, transition: 'color 0.35s var(--ease)', lineHeight: 1 }}
       >
         {first}
       </motion.span>

@@ -33,13 +33,13 @@ export function DepthLift({ label, selected }: EffectProps) {
   );
 }
 
-/* 36 · eight fine particles drift off the word and fade, again and again while it is selected */
-const DUST = Array.from({ length: 8 }, (_, i) => ({
+/* 36 · fourteen glowing particles drift off the word and fade, again and again while it is selected (eight fine ones were too faint) */
+const DUST = Array.from({ length: 14 }, (_, i) => ({
   // Rounded, so the server's markup and the client's agree to the last digit.
-  left: `${(6 + i * 12 + seeded(i, 2) * 6).toFixed(1)}%`,
-  top: `${(20 + seeded(i, 5) * 60).toFixed(1)}%`,
-  dx: Math.round(8 + seeded(i, 7) * 18),
-  dy: -Math.round(10 + seeded(i, 11) * 16),
+  left: `${(4 + i * 6.8 + seeded(i, 2) * 4).toFixed(1)}%`,
+  top: `${(15 + seeded(i, 5) * 70).toFixed(1)}%`,
+  dx: Math.round(10 + seeded(i, 7) * 26),
+  dy: -Math.round(14 + seeded(i, 11) * 24),
   dur: Math.round((1.6 + seeded(i, 13) * 0.9) * 10) / 10,
   delay: Math.round(seeded(i, 17) * 11) / 10,
 }));
@@ -52,10 +52,10 @@ export function DustDissolve({ label, selected }: EffectProps) {
           <motion.span
             aria-hidden
             key={i}
-            className="pointer-events-none absolute block size-[2px] rounded-full"
-            style={{ left: d.left, top: d.top, background: T1 }}
+            className="pointer-events-none absolute block size-[3.5px] rounded-full"
+            style={{ left: d.left, top: d.top, background: i % 3 === 0 ? 'var(--ink)' : T1, boxShadow: `0 0 7px 1px ${T1}` }}
             initial={{ x: 0, y: 0, opacity: 0, scale: 1 }}
-            animate={{ x: d.dx, y: d.dy, opacity: [0, 0.95, 0], scale: 0.4 }}
+            animate={{ x: d.dx, y: d.dy, opacity: [0, 1, 0], scale: 0.35 }}
             transition={{ duration: d.dur, delay: d.delay, ease: 'easeOut', repeat: Infinity, repeatDelay: 0.7 }}
           />
         ))}

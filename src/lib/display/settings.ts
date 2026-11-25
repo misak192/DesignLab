@@ -58,7 +58,7 @@ export type HeroSetting = (typeof HERO_CHOICES)[number];
 
 /** The hero each motion style suggests (the Hero title row of the matrix on /master). */
 export const STYLE_HERO: Record<MotionStyle, HeroStyle> = {
-  plain: 'mist',
+  plain: 'mirror',
   kinetic: 'veil',
   slice: 'slice',
   stars: 'airbrush',

@@ -623,8 +623,9 @@ function Prism({ text, g, id, tint, m, light, px, py }: VP) {
 function Slice({ text, g, id, tint, m, light, px, progress }: VP) {
   const hi = bright(tint, light);
   const cut = g.capTop + CAP_H * 0.52;
-  const lim = Math.min(110 * m.parallax, 300);
-  const top = useTransform([progress, px], ([p, x]: number[]) => (p - 0.5) * 2 * lim + x * 24 * m.parallax);
+  // Slower than the first version (Michal, 13 Nov 2026: it moved too much left and right when scrolling): a third of the travel.
+  const lim = Math.min(36 * m.parallax, 110);
+  const top = useTransform([progress, px], ([p, x]: number[]) => (p - 0.5) * 2 * lim + x * 9 * m.parallax);
   const bottom = useTransform(top, (v) => -v);
   return (
     <>

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "brand:tokens": "node scripts/brand-tokens.mjs"
   },
   "dependencies": {
     "framer-motion": "^14.6.0",
